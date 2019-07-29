@@ -7,5 +7,7 @@
 # TODO
 
 - list
-- history
+- history (when created, how often touched/looked at)
 - dirty/clean/saved display
+- select for type
+- context extendable select

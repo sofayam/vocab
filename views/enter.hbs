@@ -54,6 +54,7 @@
 ..................................
 <button id=delete>delete</button>
 <script>
+    armDirty();
     $("#delete").click(function(event) {
          let myForm = document.forms["vocab"];
          let data = { word: myForm.word.value };
@@ -89,6 +90,7 @@
             datatype: "json",
             success: function(data) {
                 //alert("Success" + JSON.stringify(data))
+                clean()
             },
             error: function(request, error) {
                 alert("Error " + JSON.stringify(error));
@@ -164,6 +166,7 @@
         })
     })
     function stuffContents(data, full) {
+        clean();
         $("#meaning").val(data.meaning);
         $("#context").val(data.context);
         $("#type").val(data.type);
@@ -171,5 +174,20 @@
         if (full) {
             $("#word").val(data.word);
         } 
+    }
+    function armDirty() {
+        for (field of ["#meaning", "#context", "#type", "#example"]) {
+            let f = function(fld) {
+                $(fld).keypress(function(event) {
+                    $(fld).css({"background": "pink"});
+                })
+            } 
+            f(field);
+        }
+    }   
+    function clean() {
+        for (field of ["#meaning", "#context", "#type", "#example"]) {
+            $(field).css({"background": "white"});
+        }       
     }
 </script>
