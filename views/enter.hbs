@@ -1,3 +1,5 @@
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <link rel="stylesheet" href="/static/easyautocomplete/easy-autocomplete.css" />
 <script src="/static/easyautocomplete/jquery.easy-autocomplete.js"></script>
@@ -43,7 +45,7 @@
                 Example:
             </td>
             <td>
-                <textarea rows="10" cols="30" id="example">
+                <textarea rows="2" cols="30" id="example">
 
                 </textarea>
             </td>
@@ -104,7 +106,7 @@
         $("#visits").val(ctr);
         $("#visits").css({ "background": "pink" });
     })
-    $("#save").click(function (event) {
+    $("#save").mouseup(function (event) {
         let myForm = document.forms["vocab"]
         let data = {
             word: myForm.word.value,
@@ -122,7 +124,9 @@
             datatype: "json",
             success: function (data) {
                 //alert("Success" + JSON.stringify(data))
-                clean()
+                stuffContents({}, true);
+                $("#word").focus();
+                // $("#word").select();
             },
             error: function (request, error) {
                 alert("Error " + JSON.stringify(error));
