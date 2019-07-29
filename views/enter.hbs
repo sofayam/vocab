@@ -1,0 +1,77 @@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<link rel="stylesheet" href="/static/easyautocomplete/easy-autocomplete.css" />
+<script src="/static/easyautocomplete/jquery.easy-autocomplete.js"></script>
+
+<h1> save page </h1>
+
+<form id="vocab">
+    <table>    
+        <tr>
+            <td>
+                Word:
+            </td>
+            <td>
+               <input type="text" value="falar" id="word">
+            </td>
+        </tr>
+         <tr>
+            <td>
+                Meaning:
+            </td>
+            <td>
+               <input type="text" value="to talk" id="meaning">
+            </td>
+        </tr>        
+        <tr>
+            <td>
+                Type:
+            </td>
+            <td>
+               <input type="text" value="Noun" id="type">
+            </td>
+        </tr>        
+        <tr>
+            <td>
+                Context:
+            </td>
+            <td>
+               <input type="text" value="some book" id="context">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Example:
+            </td>
+            <td>
+               <textarea rows="10" cols="30" id="example">
+Fala ingles?
+                </textarea>
+            </td>
+        </tr>
+    </table>
+
+</form>
+<button id=save>save</button>
+<script>
+    $("#save").click(function(event) {
+            let myForm = document.forms["vocab"]
+        let data = { 
+            word: myForm.word.value,
+            meaning: myForm.meaning.value,
+            context: myForm.context.value,
+            type: myForm.type.value,
+        };
+        $.ajax({
+            url: "/save",
+            type: "POST",
+            data,
+            datatype: "json",
+            success: function(data) {
+                //alert("Success" + JSON.stringify(data))
+            },
+            error: function(request, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        })
+    })
+</script>

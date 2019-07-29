@@ -7,6 +7,7 @@ export interface Dbentry {
     meaning: string;
     context: string;
     type: string;
+    example: string;
 }
 
 const dbname = "vocab";
@@ -47,7 +48,7 @@ export function save(entry: Dbentry) {
                     cc.client.close();
                     if (res1) {
                         console.log("inserted new entry");
-                        resolve();
+                        resolve({success: true});
                     }
                 });
             });
@@ -75,7 +76,8 @@ export function load(word: string) {
 export function findExisting(fragment: string) {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
-            cc.collection.find({word: `/^${fragment}/`}).toArray((err, res) => {
+            const selector = new RegExp("^" + fragment, "i");
+            cc.collection.find({word: selector}).toArray((err, res) => {
                 if (err) {
                     throw(Error(`Error: {err}`));
                 }

@@ -1,2 +1,38 @@
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<link rel="stylesheet" href="/static/easyautocomplete/easy-autocomplete.css" />
+<script src="/static/easyautocomplete/jquery.easy-autocomplete.js"></script>
 
 <h1> search page </h1>
+
+
+<form id="vocab">
+    <table>    
+        <tr>
+            <td>
+                Word:
+            </td>
+            <td>
+               <input type="text" value="falar" id="word">
+            </td>
+        </tr>
+    </table>
+</form>
+<button id=find>find</button>
+<script>
+    $("#find").click(function(event){
+        let myForm = document.forms["vocab"]
+        let data = { fragment:  myForm.word.value }
+        $.ajax({
+            url: "/find",
+            type: "POST",
+            data,
+            datatype: "json",
+            success: function(data) {
+                alert("Success" + JSON.stringify(data))
+            },
+            error: function(request, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        })
+    })
+</script>

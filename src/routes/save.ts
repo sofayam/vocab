@@ -1,8 +1,12 @@
 
 import * as express from "express";
+import { save as savedb } from "../model/mongo";
 
 export const save = express.Router();
 
-save.get("/", async (req, res) => {
-    res.render("save");
+save.post("/", async (req, res) => {
+
+    console.log(req.body);
+    const resdb = await savedb(req.body);
+    res.json(resdb);
 });

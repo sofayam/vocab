@@ -5,6 +5,8 @@ import * as path from "path";
 
 import { port } from "./util/config";
 
+import { enter } from "./routes/enter";
+import { find } from "./routes/find";
 import { save } from "./routes/save";
 import { search } from "./routes/search";
 
@@ -20,6 +22,7 @@ app.use((req, res, next) => {
 });
 
 const statpath = path.join(__dirname, "../src/static");
+app.use("/static", express.static(statpath));
 
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
@@ -27,11 +30,13 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "hbs");
 
-app.use("/save", save);
+app.use("/enter", enter);
 app.use("/search", search);
+app.use("/save", save);
+app.use("/find", find);
 
 app.get("/", (req, res) => {
-    res.redirect("/save");
+    res.redirect("/enter");
 });
 
 // NB you need to use server instead of app to make the socket.io magic work here
