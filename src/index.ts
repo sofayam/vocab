@@ -6,9 +6,10 @@ import * as path from "path";
 import { port } from "./util/config";
 
 import { enter } from "./routes/enter";
+import { fetch } from "./routes/fetch";
 import { find } from "./routes/find";
+import { kill } from "./routes/kill";
 import { save } from "./routes/save";
-import { search } from "./routes/search";
 
 const serverPort = normalizePort(process.env.PORT || port);
 
@@ -31,9 +32,10 @@ app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "hbs");
 
 app.use("/enter", enter);
-app.use("/search", search);
 app.use("/save", save);
 app.use("/find", find);
+app.use("/fetch", fetch);
+app.use("/kill", kill);
 
 app.get("/", (req, res) => {
     res.redirect("/enter");

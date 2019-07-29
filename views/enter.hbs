@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/static/easyautocomplete/easy-autocomplete.css" />
 <script src="/static/easyautocomplete/jquery.easy-autocomplete.js"></script>
 
-<h1> save page </h1>
+<h1> Vocab Capture </h1>
 
 <form id="vocab">
     <table>    
@@ -11,7 +11,7 @@
                 Word:
             </td>
             <td>
-               <input type="text" value="falar" id="word">
+               <input type="text"  id="word">
             </td>
         </tr>
          <tr>
@@ -19,7 +19,7 @@
                 Meaning:
             </td>
             <td>
-               <input type="text" value="to talk" id="meaning">
+               <input type="text" id="meaning">
             </td>
         </tr>        
         <tr>
@@ -27,7 +27,7 @@
                 Type:
             </td>
             <td>
-               <input type="text" value="Noun" id="type">
+               <input type="text"  id="type">
             </td>
         </tr>        
         <tr>
@@ -35,7 +35,7 @@
                 Context:
             </td>
             <td>
-               <input type="text" value="some book" id="context">
+               <input type="text"  id="context">
             </td>
         </tr>
         <tr>
@@ -44,17 +44,37 @@
             </td>
             <td>
                <textarea rows="10" cols="30" id="example">
-Fala ingles?
+
                 </textarea>
             </td>
         </tr>
     </table>
-
 </form>
 <button id=save>save</button>
+..................................
+<button id=delete>delete</button>
 <script>
+    $("#delete").click(function(event) {
+         let myForm = document.forms["vocab"];
+         let data = { word: myForm.word.value };
+        if (confirm("For realsies?")) {
+        $.ajax({
+            url: "/kill",
+            type: "POST",
+            data,
+            datatype: "json",
+            success: function(data) {
+                stuffContents({}, true);
+            },
+            error: function(request, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        })
+        }
+    })
+    
     $("#save").click(function(event) {
-            let myForm = document.forms["vocab"]
+        let myForm = document.forms["vocab"]
         let data = { 
             word: myForm.word.value,
             meaning: myForm.meaning.value,
@@ -75,4 +95,81 @@ Fala ingles?
             }
         })
     })
+        let options = {
+        url: function(phrase) {
+            return "find";
+        },
+        getValue: function(element) {
+            return element.word;
+        },
+        ajaxSettings: {
+            dataType: "json",
+            method: "POST",
+            data: {
+                dataType: "json"
+            }
+        },
+        list: {
+            onChooseEvent: function() {
+                //alert("selected " + JSON.stringify($("#word").getSelectedItemData()))
+                stuffContents($("#word").getSelectedItemData())
+            }
+        },
+        preparePostData: function(data) {
+            data.fragment = $("#word").val();
+            return data;
+        }
+    }
+
+    $("#word").easyAutocomplete(options);
+    $("#word").keypress(function(event){
+	    var keycode = (event.keyCode ? event.keyCode : event.which);
+	    if(keycode == '13'){
+		// see if there is anything in the dictionary already
+        let myForm = document.forms["vocab"]
+        let data = {word: myForm.word.value}
+        $.ajax({
+            url: "/fetch",
+            type: "POST",
+            data,
+            datatype: "json",
+            success: function(data) {
+                if (data.length > 0) {
+                    stuffContents(data[0])
+                } else {
+                    stuffContents({})
+                }
+
+            },
+            error: function(request, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        })
+	    }
+    });
+    $("#find").click(function(event){
+        let myForm = document.forms["vocab"]
+        let data = { fragment:  myForm.word.value }
+        $.ajax({
+            url: "/find",
+            type: "POST",
+            data,
+            datatype: "json",
+            success: function(data) {
+                alert("Success" + JSON.stringify(data))
+            },
+            error: function(request, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        })
+    })
+    function stuffContents(data, full) {
+        $("#meaning").val(data.meaning);
+        $("#context").val(data.context);
+        $("#type").val(data.type);
+        $("#example").val(data.example);
+        if (full) {
+            $("#word").val(data.word);
+        } 
+    }
 </script>

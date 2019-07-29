@@ -6,7 +6,7 @@ export const save = express.Router();
 
 save.post("/", async (req, res) => {
 
-    console.log(req.body);
+    // console.log(req.body);
     const resdb = await savedb(req.body);
     res.json(resdb);
 });

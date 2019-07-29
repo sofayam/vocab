@@ -47,8 +47,8 @@ export function save(entry: Dbentry) {
                 cc.collection.insertOne(entry, (err1, res1) => {
                     cc.client.close();
                     if (res1) {
-                        console.log("inserted new entry");
-                        resolve({success: true});
+                        // console.log("inserted new entry");
+                        resolve({ success: true });
                     }
                 });
             });
@@ -77,13 +77,40 @@ export function findExisting(fragment: string) {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
             const selector = new RegExp("^" + fragment, "i");
-            cc.collection.find({word: selector}).toArray((err, res) => {
+            cc.collection.find({ word: selector }).toArray((err, res) => {
                 if (err) {
-                    throw(Error(`Error: {err}`));
+                    throw (Error(`Error: {err}`));
                 }
                 resolve(res);
             });
             cc.client.close();
+        });
+    });
+}
+
+export function fetchOne(word: string) {
+    return new Promise<any>((resolve) => {
+        getCollection(vocab).then((cc) => {
+            cc.collection.find({ word }).toArray((err, res) => {
+                if (err) {
+                    throw (Error(`Error: {err}`));
+                }
+                resolve(res);
+            });
+            cc.client.close();
+        });
+    });
+}
+
+export function killMany(word: string) {
+    return new Promise((resolve) => {
+        getCollection(vocab).then((cc) => {
+            // delete the old ones first
+            cc.collection.deleteMany({ word }, (err, res) => {
+                assert.equal(err, null);
+                cc.client.close();
+                resolve({ success: true });
+            });
         });
     });
 }
