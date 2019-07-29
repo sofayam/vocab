@@ -5,37 +5,37 @@
 <h1> Vocab Capture </h1>
 
 <form id="vocab">
-    <table>    
+    <table>
         <tr>
             <td>
                 Word:
             </td>
             <td>
-               <input type="text"  id="word">
+                <input type="text" id="word">
             </td>
         </tr>
-         <tr>
+        <tr>
             <td>
                 Meaning:
             </td>
             <td>
-               <input type="text" id="meaning">
+                <input type="text" id="meaning">
             </td>
-        </tr>        
+        </tr>
         <tr>
             <td>
                 Type:
             </td>
             <td>
-               <input type="text"  id="type">
+                <input type="text" id="type">
             </td>
-        </tr>        
+        </tr>
         <tr>
             <td>
                 Context:
             </td>
             <td>
-               <input type="text"  id="context">
+                <input type="text" id="context">
             </td>
         </tr>
         <tr>
@@ -43,65 +43,97 @@
                 Example:
             </td>
             <td>
-               <textarea rows="10" cols="30" id="example">
+                <textarea rows="10" cols="30" id="example">
 
                 </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Visits:
+            </td>
+            <td>
+                <input type="text" id="visits">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Created:
+            </td>
+            <td>
+                <input type="text" id="created">
             </td>
         </tr>
     </table>
 </form>
 <button id=save>save</button>
-..................................
+...........
+<button id=bump>bump</button>
+...........
 <button id=delete>delete</button>
 <script>
+    let fields = ["meaning", "context", "type", "example", "visits", "created"]
     armDirty();
-    $("#delete").click(function(event) {
-         let myForm = document.forms["vocab"];
-         let data = { word: myForm.word.value };
+    $("#delete").click(function (event) {
+        let myForm = document.forms["vocab"];
+        let data = { word: myForm.word.value };
         if (confirm("For realsies?")) {
-        $.ajax({
-            url: "/kill",
-            type: "POST",
-            data,
-            datatype: "json",
-            success: function(data) {
-                stuffContents({}, true);
-            },
-            error: function(request, error) {
-                alert("Error " + JSON.stringify(error));
-            }
-        })
+            $.ajax({
+                url: "/kill",
+                type: "POST",
+                data,
+                datatype: "json",
+                success: function (data) {
+                    stuffContents({}, true);
+                },
+                error: function (request, error) {
+                    alert("Error " + JSON.stringify(error));
+                }
+            })
         }
     })
-    
-    $("#save").click(function(event) {
+    $("#bump").click(function (event) {
         let myForm = document.forms["vocab"]
-        let data = { 
+        let ctr = myForm.visits.value
+        if(ctr) {
+            ctr = parseInt(ctr)
+        } else {
+            ctr = 0
+        }
+        ctr += 1;
+        $("#visits").val(ctr);
+        $("#visits").css({ "background": "pink" });
+    })
+    $("#save").click(function (event) {
+        let myForm = document.forms["vocab"]
+        let data = {
             word: myForm.word.value,
             meaning: myForm.meaning.value,
             context: myForm.context.value,
             type: myForm.type.value,
             example: myForm.example.value,
+            created: myForm.created.value || new Date(),
+            visits: myForm.visits.value,
         };
         $.ajax({
             url: "/save",
             type: "POST",
             data,
             datatype: "json",
-            success: function(data) {
+            success: function (data) {
                 //alert("Success" + JSON.stringify(data))
                 clean()
             },
-            error: function(request, error) {
+            error: function (request, error) {
                 alert("Error " + JSON.stringify(error));
             }
         })
     })
-        let options = {
-        url: function(phrase) {
+    let options = {
+        url: function (phrase) {
             return "find";
         },
-        getValue: function(element) {
+        getValue: function (element) {
             return element.word;
         },
         ajaxSettings: {
@@ -112,82 +144,82 @@
             }
         },
         list: {
-            onChooseEvent: function() {
+            onChooseEvent: function () {
                 //alert("selected " + JSON.stringify($("#word").getSelectedItemData()))
                 stuffContents($("#word").getSelectedItemData())
             }
         },
-        preparePostData: function(data) {
+        preparePostData: function (data) {
             data.fragment = $("#word").val();
             return data;
         }
     }
 
     $("#word").easyAutocomplete(options);
-    $("#word").keypress(function(event){
-	    var keycode = (event.keyCode ? event.keyCode : event.which);
-	    if(keycode == '13'){
-		// see if there is anything in the dictionary already
-        let myForm = document.forms["vocab"]
-        let data = {word: myForm.word.value}
-        $.ajax({
-            url: "/fetch",
-            type: "POST",
-            data,
-            datatype: "json",
-            success: function(data) {
-                if (data.length > 0) {
-                    stuffContents(data[0])
-                } else {
-                    stuffContents({})
-                }
+    $("#word").keypress(function (event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+            // see if there is anything in the dictionary already
+            let myForm = document.forms["vocab"]
+            let data = { word: myForm.word.value }
+            $.ajax({
+                url: "/fetch",
+                type: "POST",
+                data,
+                datatype: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        stuffContents(data[0])
+                    } else {
+                        stuffContents({})
+                    }
 
-            },
-            error: function(request, error) {
-                alert("Error " + JSON.stringify(error));
-            }
-        })
-	    }
+                },
+                error: function (request, error) {
+                    alert("Error " + JSON.stringify(error));
+                }
+            })
+        }
     });
-    $("#find").click(function(event){
+    $("#find").click(function (event) {
         let myForm = document.forms["vocab"]
-        let data = { fragment:  myForm.word.value }
+        let data = { fragment: myForm.word.value }
         $.ajax({
             url: "/find",
             type: "POST",
             data,
             datatype: "json",
-            success: function(data) {
+            success: function (data) {
                 alert("Success" + JSON.stringify(data))
             },
-            error: function(request, error) {
+            error: function (request, error) {
                 alert("Error " + JSON.stringify(error));
             }
         })
     })
+
     function stuffContents(data, full) {
         clean();
-        $("#meaning").val(data.meaning);
-        $("#context").val(data.context);
-        $("#type").val(data.type);
-        $("#example").val(data.example);
+        for (field of fields) {
+            $("#" + field).val(data[field])
+        }
         if (full) {
             $("#word").val(data.word);
-        } 
+        }
     }
     function armDirty() {
-        for (field of ["#meaning", "#context", "#type", "#example"]) {
-            let f = function(fld) {
-                $(fld).keypress(function(event) {
-                    $(fld).css({"background": "pink"});
+        for (field of fields) {
+            let f = function (fld) {
+                $(fld).keypress(function (event) {
+                    $(fld).css({ "background": "pink" });
                 })
-            } 
-            f(field);
+            }
+            f("#" + field);
         }
-    }   
+    }
     function clean() {
-        for (field of ["#meaning", "#context", "#type", "#example"]) {
-            $(field).css({"background": "white"});
-        }       
+        for (field of fields) {
+            $("#" + field).css({ "background": "white" });
+        }
     }
 </script>

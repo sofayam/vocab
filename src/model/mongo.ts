@@ -8,6 +8,8 @@ export interface Dbentry {
     context: string;
     type: string;
     example: string;
+    created: Date;
+    visits: number;
 }
 
 const dbname = "vocab";
