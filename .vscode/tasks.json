@@ -1,0 +1,23 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558 
+    // for the documentation about the tasks.json format
+    // This works with the AutoLaunch extension for vscode > 1.33.0
+    "$comment": "Ignore the 'auto' declaration eror",
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "tsc watch",
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "option": "watch",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "auto": true
+        }
+    ]
+}

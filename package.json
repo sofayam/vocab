@@ -1,0 +1,20 @@
+{
+  "name": "vocab",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./dist/index"
+  },
+  "dependencies": {
+    "@types/express": "^4.0.35",
+    "@types/hbs": "^4.0.1",
+    "@types/mongodb": "^3.1.19",
+    "express": "^4.16.3",
+    "hbs": "^4.0.4",
+    "mongodb": "^3.1.13"
+  },
+  "engines": {
+    "node": ">=8.11.1",
+    "npm": ">=5.6.0"
+  }
+}

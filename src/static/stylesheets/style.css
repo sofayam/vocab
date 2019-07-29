@@ -1,0 +1,60 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+
+ul {
+  border: 1px solid black;
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 0 10px;
+  height: 25px;
+  line-height: 25px;
+}
+
+li:nth-child(odd) {
+  background-color: #CCC;
+}
+
+li:nth-child(even) {
+  background-color: white;
+}
+
+
+#col4 {
+  -moz-column-count: 4;
+  -webkit-column-count: 4;
+  column-count: 4;
+}
+.boxed {
+  border: 1px solid green ;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 5px;
+}
+th {
+  text-align: left;
+}
+
+#map {
+  height: 100%;
+}

@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "sourceMap": true,
+        //"watch": true,
+        "allowJs": true,
+        "outDir": "dist",
+        "strictNullChecks": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "lib": [
+            "esnext",
+            "dom"
+          ]
+    }
+}
