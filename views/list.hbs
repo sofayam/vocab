@@ -5,10 +5,15 @@
 {{#each records}}
 <tr>
     <td>
-        {{this.word}}
+        <a href="/enter?word={{this.word}}">
+          {{this.word}}
+        </a>
     </td>
     <td>
         {{this.meaning}}
+    </td>
+    <td>
+        {{this.context}}
     </td>
 </tr>
 

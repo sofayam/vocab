@@ -59,22 +59,6 @@ export function save(entry: Dbentry) {
 
 }
 
-export function load(word: string) {
-    return new Promise<Dbentry>((resolve, reject) => {
-        getCollection(vocab).then((cc) => {
-            cc.collection.findOne({ word }, (err, res) => {
-                cc.client.close();
-                assert.equal(err, null);
-                if (res) {
-                    resolve(res);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
-    });
-}
-
 export function findExisting(fragment: string) {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
@@ -131,7 +115,7 @@ export function dump() {
     });
 }
 
-export function contexts() {
+export function fetchContexts() {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
             cc.collection.distinct("context", {}, (err, res) => {

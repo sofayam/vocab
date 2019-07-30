@@ -1,4 +1,3 @@
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <link rel="stylesheet" href="/static/easyautocomplete/easy-autocomplete.css" />
@@ -13,7 +12,7 @@
                 Word:
             </td>
             <td>
-                <input type="text" id="word">
+                <input type="text" id="word" value="{{word.word}}">
             </td>
         </tr>
         <tr>
@@ -21,7 +20,7 @@
                 Meaning:
             </td>
             <td>
-                <input type="text" id="meaning">
+                <input type="text" id="meaning" value="{{word.meaning}}">
             </td>
         </tr>
         <tr>
@@ -29,7 +28,7 @@
                 Type:
             </td>
             <td>
-                <input type="text" id="type">
+                <input type="text" id="type" value="{{word.type}}">
             </td>
         </tr>
         <tr>
@@ -37,7 +36,7 @@
                 Context:
             </td>
             <td>
-                <input type="text" id="context">
+                <input type="text" id="context" value="{{word.context}}">
             </td>
         </tr>
         <tr>
@@ -46,7 +45,7 @@
             </td>
             <td>
                 <textarea rows="2" cols="30" id="example">
-
+                    {{word.example}}
                 </textarea>
             </td>
         </tr>
@@ -55,7 +54,7 @@
                 Visits:
             </td>
             <td>
-                <input type="text" id="visits">
+                <input type="text" id="visits" value="{{word.visits}}">
             </td>
         </tr>
         <tr>
@@ -63,7 +62,7 @@
                 Created:
             </td>
             <td>
-                <input type="text" id="created">
+                <input type="text" id="created" value="{{word.created}}">
             </td>
         </tr>
     </table>
@@ -137,7 +136,7 @@
             }
         })
     })
-    let options = {
+    let wordacoptions = {
         url: function (phrase) {
             return "find";
         },
@@ -163,7 +162,7 @@
         }
     }
 
-    $("#word").easyAutocomplete(options);
+    $("#word").easyAutocomplete(wordacoptions);
     $("#word").keypress(function (event) {
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if (keycode == '13') {
@@ -188,7 +187,24 @@
                 }
             })
         }
-    });
+    })
+    let contextacoptions = {
+        url: function (phrase) {
+            return "contexts";
+        },
+        getValue: function (element) {
+            return element;
+        },
+        ajaxSettings: {
+            dataType: "json",
+            method: "GET",
+            data: {
+                dataType: "json"
+            }
+        },
+    }
+    $("#context").easyAutocomplete(contextacoptions);
+
     $("#find").click(function (event) {
         let myForm = document.forms["vocab"]
         let data = { fragment: myForm.word.value }
@@ -210,9 +226,6 @@
         clean();
         for (field of fields) {
             $("#" + field).val(data[field])
-        }
-        if (!data["context"]) {
-            $("#context").val("None")
         }
         if (full) {
             $("#word").val(data.word);

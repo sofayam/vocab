@@ -5,6 +5,7 @@ import * as path from "path";
 
 import { port } from "./util/config";
 
+import { contexts } from "./routes/contexts";
 import { enter } from "./routes/enter";
 import { fetch } from "./routes/fetch";
 import { find } from "./routes/find";
@@ -38,7 +39,7 @@ app.use("/find", find);
 app.use("/fetch", fetch);
 app.use("/kill", kill);
 app.use("/list", list);
-
+app.use("/contexts", contexts);
 app.get("/", (req, res) => {
     res.redirect("/enter");
 });
