@@ -116,3 +116,31 @@ export function killMany(word: string) {
         });
     });
 }
+
+export function dump() {
+    return new Promise<any>((resolve) => {
+        getCollection(vocab).then((cc) => {
+            cc.collection.find({ }).toArray((err, res) => {
+                if (err) {
+                    throw (Error(`Error: {err}`));
+                }
+                resolve(res);
+            });
+            cc.client.close();
+        });
+    });
+}
+
+export function contexts() {
+    return new Promise<any>((resolve) => {
+        getCollection(vocab).then((cc) => {
+            cc.collection.distinct("context", {}, (err, res) => {
+                if (err) {
+                    throw (Error(`Error: {err}`));
+                }
+                resolve(res);
+            });
+            cc.client.close();
+        });
+    });
+}

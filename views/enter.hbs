@@ -114,9 +114,10 @@
             context: myForm.context.value,
             type: myForm.type.value,
             example: myForm.example.value,
-            created: myForm.created.value || new Date(),
+            created: myForm.created.value || new Date().getTime(),
             visits: myForm.visits.value,
         };
+        previousContext = myForm.context.value;
         $.ajax({
             url: "/save",
             type: "POST",
@@ -209,6 +210,9 @@
         clean();
         for (field of fields) {
             $("#" + field).val(data[field])
+        }
+        if (!data["context"]) {
+            $("#context").val("None")
         }
         if (full) {
             $("#word").val(data.word);

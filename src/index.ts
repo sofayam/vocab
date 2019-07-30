@@ -9,6 +9,7 @@ import { enter } from "./routes/enter";
 import { fetch } from "./routes/fetch";
 import { find } from "./routes/find";
 import { kill } from "./routes/kill";
+import { list } from "./routes/list";
 import { save } from "./routes/save";
 
 const serverPort = normalizePort(process.env.PORT || port);
@@ -36,6 +37,7 @@ app.use("/save", save);
 app.use("/find", find);
 app.use("/fetch", fetch);
 app.use("/kill", kill);
+app.use("/list", list);
 
 app.get("/", (req, res) => {
     res.redirect("/enter");
