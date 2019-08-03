@@ -14,5 +14,7 @@
             "esnext",
             "dom"
           ]
-    }
+    },
+    "include": [ "src/**/*" ],
+    "exclude": [ "scripts" ]
 }
