@@ -65,7 +65,7 @@ export function findExisting(fragment: string) {
             const selector = new RegExp("^" + fragment, "i");
             cc.collection.find({ word: selector }).toArray((err, res) => {
                 if (err) {
-                    throw (Error(`Error: {err}`));
+                    throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
             });
@@ -79,7 +79,7 @@ export function fetchOne(word: string) {
         getCollection(vocab).then((cc) => {
             cc.collection.find({ word }).toArray((err, res) => {
                 if (err) {
-                    throw (Error(`Error: {err}`));
+                    throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
             });
@@ -106,7 +106,7 @@ export function dump() {
         getCollection(vocab).then((cc) => {
             cc.collection.find({ }).toArray((err, res) => {
                 if (err) {
-                    throw (Error(`Error: {err}`));
+                    throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
             });
@@ -120,7 +120,7 @@ export function fetchContexts() {
         getCollection(vocab).then((cc) => {
             cc.collection.distinct("context", {}, (err, res) => {
                 if (err) {
-                    throw (Error(`Error: {err}`));
+                    throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
             });
