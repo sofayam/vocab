@@ -109,8 +109,9 @@ export function dump() {
                     throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
+                cc.client.close();
             });
-            cc.client.close();
+         
         });
     });
 }
