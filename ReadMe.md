@@ -12,4 +12,4 @@
 - x sortable dB entry history (when created)
 - x dirty/clean/saved display
 - select for type
-- x context extendable select
+- context extendable select preselect last and implement true autocomplete 
