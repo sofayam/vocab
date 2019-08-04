@@ -108,13 +108,13 @@
     $("#save").mouseup(function (event) {
         let myForm = document.forms["vocab"]
         let data = {
-            word: myForm.word.value,
-            meaning: myForm.meaning.value,
-            context: myForm.context.value,
-            type: myForm.type.value,
-            example: myForm.example.value,
-            created: myForm.created.value || new Date().getTime(),
-            visits: myForm.visits.value,
+            word: myForm.word.value.trim(),
+            meaning: myForm.meaning.value.trim(),
+            context: myForm.context.value.trim(),
+            type: myForm.type.value.trim(),
+            example: myForm.example.value.trim(),
+            created: myForm.created.value.trim() || new Date().getTime(),
+            visits: myForm.visits.value.trim(),
         };
         previousContext = myForm.context.value;
         $.ajax({
