@@ -68,8 +68,8 @@ export function findExisting(fragment: string) {
                     throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
+                cc.client.close();
             });
-            cc.client.close();
         });
     });
 }
@@ -82,8 +82,8 @@ export function fetchOne(word: string) {
                     throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
+                cc.client.close();
             });
-            cc.client.close();
         });
     });
 }
@@ -111,21 +111,43 @@ export function dump() {
                 resolve(res);
                 cc.client.close();
             });
-         
         });
     });
 }
 
-export function fetchContexts() {
+export function fetchContexts(fragment) {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
             cc.collection.distinct("context", {}, (err, res) => {
                 if (err) {
                     throw (Error(`Error: ${err}`));
                 }
-                resolve(res);
+                const filtered: string[] = [];
+                const re = new RegExp(`${fragment}`, "i");
+                for (const ctx of res) {
+                    if (re.test(ctx)) {
+                        filtered.push(ctx);
+                    }
+                }
+                resolve(filtered);
+                cc.client.close();
             });
-            cc.client.close();
+        });
+    });
+}
+
+export function fetchLast() {
+    return new Promise<any>((resolve) => {
+        getCollection(vocab).then((cc) => {
+            cc.collection.find().limit(1).sort({$natural: -1}).toArray((err, res) => {
+                if (res.length > 0) {
+                    resolve(res[0]);
+                } else {
+                    resolve();
+                }
+                cc.client.close();
+            });
+
         });
     });
 }

@@ -8,6 +8,7 @@ import { port } from "./util/config";
 import { contexts } from "./routes/contexts";
 import { enter } from "./routes/enter";
 import { fetch } from "./routes/fetch";
+import { fetchLatest } from "./routes/fetchLatest";
 import { find } from "./routes/find";
 import { kill } from "./routes/kill";
 import { list } from "./routes/list";
@@ -40,6 +41,7 @@ app.use("/fetch", fetch);
 app.use("/kill", kill);
 app.use("/list", list);
 app.use("/contexts", contexts);
+app.use("/fetchLatest", fetchLatest);
 app.get("/", (req, res) => {
     res.redirect("/enter");
 });

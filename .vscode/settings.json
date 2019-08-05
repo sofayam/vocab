@@ -7,5 +7,6 @@
     },
     "search.exclude": {
         "**/node_modules": false
-    }
+    },
+    "http.proxyStrictSSL": false
 }

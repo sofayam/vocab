@@ -4,8 +4,8 @@ import { fetchContexts } from "../model/mongo";
 
 export const contexts = express.Router();
 
-contexts.get("/", async (req, res) => {
+contexts.post("/", async (req, res) => {
     // console.log(req.body);
-    const resdb = await fetchContexts();
+    const resdb = await fetchContexts(req.body.fragment);
     res.json(resdb);
 });

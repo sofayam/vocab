@@ -1,16 +1,21 @@
 
 import * as express from "express";
-import { fetchOne } from "../model/mongo";
+import { fetchLast, fetchOne } from "../model/mongo";
 
 export const enter = express.Router();
 
 enter.get("/", async (req, res) => {
+    let fields: any = {};
     if (req.query.word) {
         const words = await fetchOne(req.query.word);
         if (words.length > 0) {
-            res.render("enter", {word: words[0]});
-            return;
+            fields = words[0];
+        }
+    } else {
+        const last = await fetchLast();
+        if (last) {
+            fields.context = last.context;
         }
     }
-    res.render("enter");
+    res.render("enter", {word: fields});
 });

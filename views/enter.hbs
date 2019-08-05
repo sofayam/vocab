@@ -85,7 +85,7 @@
                 data,
                 datatype: "json",
                 success: function (data) {
-                    stuffContents({}, true);
+                    stuffContents({}, true, true);
                 },
                 error: function (request, error) {
                     alert("Error " + JSON.stringify(error));
@@ -124,7 +124,7 @@
             datatype: "json",
             success: function (data) {
                 //alert("Success" + JSON.stringify(data))
-                stuffContents({}, true);
+                stuffContents({}, true, true);
                 setTimeout(function() {
                     $("#word").focus();
                     $("#word").select();
@@ -176,9 +176,9 @@
                 datatype: "json",
                 success: function (data) {
                     if (data.length > 0) {
-                        stuffContents(data[0])
+                        stuffContents(data[0], false, true)
                     } else {
-                        stuffContents({})
+                        stuffContents({}, false, true)
                     }
 
                 },
@@ -197,11 +197,15 @@
         },
         ajaxSettings: {
             dataType: "json",
-            method: "GET",
+            method: "POST",
             data: {
                 dataType: "json"
             }
         },
+        preparePostData: function (data) {
+            data.fragment = $("#context").val()
+            return data;
+        }
     }
     $("#context").easyAutocomplete(contextacoptions);
 
@@ -222,13 +226,16 @@
         })
     })
 
-    function stuffContents(data, full) {
+    function stuffContents(data, full, context) {
         clean();
         for (field of fields) {
             $("#" + field).val(data[field])
         }
         if (full) {
             $("#word").val(data.word);
+        }
+        if (context) { 
+            fetchLatestContext();
         }
     }
     function armDirty() {
@@ -245,5 +252,20 @@
         for (field of fields) {
             $("#" + field).css({ "background": "white" });
         }
+    }
+    function fetchLatestContext() {
+        $.ajax({
+            url: "/fetchLatest",
+            type: "GET",
+            datatype: "json",
+            success: function(data) {
+                if(data && data.context) {
+                    $("#context").val(data.context);
+                }
+            },
+            error: function (request, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        })
     }
 </script>
