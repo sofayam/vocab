@@ -8,8 +8,8 @@
 
 - x list for review
 - sort list by context/age/alpha
-- paging
+- x paging
 - x sortable dB entry history (when created)
 - x dirty/clean/saved display
 - select for type
-- context extendable select preselect last and implement true autocomplete 
+- x context extendable select preselect last and implement true autocomplete 
