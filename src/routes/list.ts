@@ -1,6 +1,7 @@
 
 import * as express from "express";
 import { dump } from "../model/mongo";
+import { pageSize } from "../util/config";
 
 export const list = express.Router();
 
@@ -9,6 +10,10 @@ list.get("/", async (req, res) => {
     if (req.query.page) {
         page = parseInt(req.query.page, 10);
     }
-    const records = await dump(page);
-    res.render("list", { records, nextPage: page + 1 });
+    const {records, total} = await dump(page);
+    const lastPage = Math.ceil(total / pageSize);
+    res.render("list", { records,
+        prevPage: Math.max(1, page - 1),
+        nextPage: Math.min(page + 1, lastPage),
+        lastPage  });
 });

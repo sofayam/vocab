@@ -109,12 +109,14 @@ export function dump(page) {
                 skip: (page - 1) * pageSize,
                 limit: pageSize,
             };
-            cc.collection.find({ }, options).sort({$natural: -1}).toArray((err, res) => {
-                if (err) {
-                    throw (Error(`Error: ${err}`));
-                }
-                resolve(res);
-                cc.client.close();
+            cc.collection.count().then((ct) => {
+                cc.collection.find({ }, options).sort({$natural: -1}).toArray((err, res) => {
+                    if (err) {
+                        throw (Error(`Error: ${err}`));
+                    }
+                    resolve({records: res, total: ct});
+                    cc.client.close();
+                });
             });
         });
     });
