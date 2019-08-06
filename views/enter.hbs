@@ -4,7 +4,12 @@
 <script src="/static/easyautocomplete/jquery.easy-autocomplete.js"></script>
 
 <h1> Vocab Capture </h1>
-
+<button id=saveTop>save</button>
+...........
+<button id=bumpTop>bump</button>
+...........
+<button id=deleteTop>delete</button>
+<p></p>
 <form id="vocab">
     <table>
         <tr>
@@ -67,15 +72,17 @@
         </tr>
     </table>
 </form>
-<button id=save>save</button>
+<button id=saveBot>save</button>
 ...........
-<button id=bump>bump</button>
+<button id=bumpBot>bump</button>
 ...........
-<button id=delete>delete</button>
+<button id=deleteBot>delete</button>
 <script>
     let fields = ["meaning", "context", "type", "example", "visits", "created"]
     armDirty();
-    $("#delete").click(function (event) {
+    $("#deleteTop").click(deletefn);
+    $("#deleteBot").click(deletefn);
+    function deletefn (event) {
         let myForm = document.forms["vocab"];
         let data = { word: myForm.word.value };
         if (confirm("For realsies?")) {
@@ -92,8 +99,10 @@
                 }
             })
         }
-    })
-    $("#bump").click(function (event) {
+    }
+    $("#bumpTop").click(bumpfn);
+    $("#bumpBot").click(bumpfn);
+    function bumpfn (event) {
         let myForm = document.forms["vocab"]
         let ctr = myForm.visits.value
         if(ctr) {
@@ -104,8 +113,10 @@
         ctr += 1;
         $("#visits").val(ctr);
         $("#visits").css({ "background": "pink" });
-    })
-    $("#save").mouseup(function (event) {
+    }
+    $("#saveBot").mouseup(savefn)
+    $("#saveTop").mouseup(savefn)
+    function savefn (event) {
         let myForm = document.forms["vocab"]
         let data = {
             word: myForm.word.value.trim(),
@@ -135,7 +146,7 @@
                 alert("Error " + JSON.stringify(error));
             }
         })
-    })
+    }
     let wordacoptions = {
         url: function (phrase) {
             return "find";

@@ -1,6 +1,7 @@
 
 import * as assert from "assert";
 import { Collection, MongoClient, MongoClientOptions, ObjectId } from "mongodb";
+import { pageSize } from "../util/config";
 
 export interface Dbentry {
     word: string;
@@ -101,10 +102,14 @@ export function killMany(word: string) {
     });
 }
 
-export function dump() {
+export function dump(page) {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
-            cc.collection.find({ }).toArray((err, res) => {
+            const options = {
+                skip: (page - 1) * pageSize,
+                limit: pageSize,
+            };
+            cc.collection.find({ }, options).sort({$natural: -1}).toArray((err, res) => {
                 if (err) {
                     throw (Error(`Error: ${err}`));
                 }
