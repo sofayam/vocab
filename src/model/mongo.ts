@@ -158,3 +158,7 @@ export function fetchLast() {
         });
     });
 }
+
+export function bumpIt(id: number) {
+  // TODO:
+}
