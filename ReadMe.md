@@ -13,3 +13,11 @@
 - x dirty/clean/saved display
 - select for type
 - x context extendable select preselect last and implement true autocomplete 
+
+# Cheatsheet
+
+- cd dump 
+- mongodump vocab
+
+- cd dump 
+- mongorestore dump
