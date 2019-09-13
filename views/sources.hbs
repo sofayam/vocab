@@ -1,13 +1,14 @@
-<h1>Show sources here</h1>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 
 Enter new source
 
 <form id="sources">
     <table>
         <tr>
-            <td>id: </td>
+            <td>tag: </td>
             <td>
-                <input type="text" id="id">
+                <input type="text" id="tag">
             </td>
         </tr>
         <tr>
@@ -24,7 +25,22 @@ Enter new source
 <script>
     $("#save").click(savefn);
     function savefn (event) {
-        TODO:
+        let myForm = document.forms["sources"]
+        let data = {
+            tag: myForm.tag.value.trim(),
+            full: myForm.full.value.trim(),
+        }
+        $.ajax({
+            url: "/saveSource",
+            type: "POST",
+            data,
+            datatype: "json",
+            success: function (data) {
+                myForm.tag.value = "";
+                myForm.full.value = "";
+                // refresh the page to force a rebuild of the select widget with the new value
+            }
+        })
     }
 </script>
 Select source

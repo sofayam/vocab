@@ -4,9 +4,9 @@ import { Collection, MongoClient, MongoClientOptions, ObjectId } from "mongodb";
 import { pageSize } from "../util/config";
 
 export interface Source {
-    id: string;
+    tag: string;
     full: string;
-    created: number;
+    created?: number;
 }
 export interface Sighting {
     source: string;
@@ -175,6 +175,7 @@ export function bumpIt(id: number) {
 }
 
 export function addSource(source: Source) {
+    source.created = new Date().getTime();
     return new Promise<boolean>((resolve) => {
         getCollection(sources).then((cc) => {
             cc.collection.insertOne(source, (err, res) => {
