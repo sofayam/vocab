@@ -3,6 +3,15 @@ import * as assert from "assert";
 import { Collection, MongoClient, MongoClientOptions, ObjectId } from "mongodb";
 import { pageSize } from "../util/config";
 
+export interface Source {
+    id: string;
+    full: string;
+    created: number;
+}
+export interface Sighting {
+    source: string;
+    time: number;
+}
 export interface Dbentry {
     word: string;
     meaning: string;
@@ -11,6 +20,7 @@ export interface Dbentry {
     example: string;
     created: Date;
     visits: number;
+    sightings?: Sighting[];
 }
 
 const dbname = "vocab";
@@ -18,6 +28,7 @@ const uri = getURI();
 
 // Collections
 const vocab = "vocab";
+const sources = "sources";
 
 function getURI() {
 
@@ -114,7 +125,7 @@ export function dump(page) {
                     if (err) {
                         throw (Error(`Error: ${err}`));
                     }
-                    resolve({records: res, total: ct});
+                    resolve({ records: res, total: ct });
                     cc.client.close();
                 });
             });
@@ -146,7 +157,7 @@ export function fetchContexts(fragment) {
 export function fetchLast() {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
-            cc.collection.find().limit(1).sort({$natural: -1}).toArray((err, res) => {
+            cc.collection.find().limit(1).sort({ $natural: -1 }).toArray((err, res) => {
                 if (res.length > 0) {
                     resolve(res[0]);
                 } else {
@@ -160,5 +171,34 @@ export function fetchLast() {
 }
 
 export function bumpIt(id: number) {
-  // TODO:
+    // TODO:
+}
+
+export function addSource(source: Source) {
+    return new Promise<boolean>((resolve) => {
+        getCollection(sources).then((cc) => {
+            cc.collection.insertOne(source, (err, res) => {
+                cc.client.close();
+                if (err) {
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    });
+}
+
+export function getSources() {
+    return new Promise<Source[]>((resolve) => {
+        getCollection(sources).then((cc) => {
+            cc.collection.find({}).toArray((err, res) => {
+                if (err) {
+                    throw (Error(`Error: ${err}`));
+                }
+                resolve(res as Source[]);
+                cc.client.close();
+            });
+        });
+    });
 }
