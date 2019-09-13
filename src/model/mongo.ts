@@ -109,7 +109,7 @@ export function dump(page) {
                 skip: (page - 1) * pageSize,
                 limit: pageSize,
             };
-            cc.collection.count().then((ct) => {
+            cc.collection.countDocuments().then((ct) => {
                 cc.collection.find({ }, options).sort({$natural: -1}).toArray((err, res) => {
                     if (err) {
                         throw (Error(`Error: ${err}`));
