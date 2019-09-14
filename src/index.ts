@@ -13,7 +13,8 @@ import { find } from "./routes/find";
 import { kill } from "./routes/kill";
 import { list } from "./routes/list";
 import { save } from "./routes/save";
-import { saveSource } from "./routes/saveSource";
+import { saveNewSource } from "./routes/saveNewSource";
+import { setCurrentSource } from "./routes/setCurrentSource";
 import { sources } from "./routes/sources";
 
 const serverPort = normalizePort(process.env.PORT || port);
@@ -45,7 +46,9 @@ app.use("/list", list);
 app.use("/contexts", contexts);
 app.use("/fetchLatest", fetchLatest);
 app.use("/sources", sources);
-app.use("/saveSource", saveSource);
+app.use("/saveNewSource", saveNewSource);
+app.use("/setCurrentSource", setCurrentSource);
+
 app.get("/", (req, res) => {
     res.redirect("/enter");
 });

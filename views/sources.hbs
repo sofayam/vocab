@@ -1,7 +1,23 @@
 
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 
-Enter new source
+
+<form id="chooseForm">
+  <label>Choose source:
+    <select id="choose">
+        {{#each choices}}
+            <option 
+                {{#if this.current}}
+                selected="selected"
+                {{/if}}
+            > {{this.tag}}
+            </option>
+        {{/each}}
+    </select>
+  </label>
+</form>
+
+Enter new source:
 
 <form id="sources">
     <table>
@@ -31,18 +47,39 @@ Enter new source
             full: myForm.full.value.trim(),
         }
         $.ajax({
-            url: "/saveSource",
+            url: "/saveNewSource",
             type: "POST",
             data,
             datatype: "json",
             success: function (data) {
                 myForm.tag.value = "";
                 myForm.full.value = "";
-                // refresh the page to force a rebuild of the select widget with the new value
+                location.reload();
             }
         })
     }
+    $("#choose").change(function(){
+        var choice = $(this).children("option:selected").val();
+        let data = {current: choice}
+        $.ajax({
+            url: "/setCurrentSource",
+            type: "POST",
+            data,
+            datatype: "json",
+            success: function (data) {
+            }
+        })
+    });
 </script>
+
+<hr>
+<ul>
+    {{#each choices}}
+    <li>
+        {{this.tag}} : {{this.full}}
+    </li>
+    {{/each}}
+</ul>
 Select source
 
 List sources (with statistics?)

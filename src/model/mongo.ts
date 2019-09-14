@@ -7,6 +7,12 @@ export interface Source {
     tag: string;
     full: string;
     created?: number;
+    current?: boolean;
+}
+
+export interface Choice {
+    tag: string;
+    created: number;
 }
 export interface Sighting {
     source: string;
@@ -29,6 +35,7 @@ const uri = getURI();
 // Collections
 const vocab = "vocab";
 const sources = "sources";
+const current = "current";
 
 function getURI() {
 
@@ -199,6 +206,31 @@ export function getSources() {
                 }
                 resolve(res as Source[]);
                 cc.client.close();
+            });
+        });
+    });
+}
+
+export function getCurrentSource() {
+    return new Promise<Choice> ((resolve) => {
+        getCollection(current).then((cc) => {
+            cc.collection.findOne({}, {sort: {$natural: -1}}).then((res) => {
+                resolve(res);
+                cc.client.close();
+            });
+        });
+    });
+}
+
+export function setCurrentSource(chosen: string) {
+    return new Promise<any>((resolve) => {
+        const choice: Choice = {
+            tag: chosen,
+            created: new Date().getTime(),
+        };
+        getCollection(current).then((cc) => {
+            cc.collection.insertOne(choice).then((res) => {
+                resolve();
             });
         });
     });
