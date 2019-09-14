@@ -19,13 +19,14 @@ export interface Sighting {
     time: number;
 }
 export interface Dbentry {
+    _id?: string;
     word: string;
     meaning: string;
     context: string;
     type: string;
     example: string;
     created: Date;
-    visits: number;
+    visits: string;
     sightings?: Sighting[];
 }
 
@@ -231,6 +232,33 @@ export function setCurrentSource(chosen: string) {
         getCollection(current).then((cc) => {
             cc.collection.insertOne(choice).then((res) => {
                 resolve();
+                cc.client.close();
+            });
+        });
+    });
+}
+
+export function addSighting(id: number, tag: string) {
+    const sighting: Sighting = {
+        source: tag,
+        time: new Date().getTime(),
+    };
+    return new Promise<Sighting>((resolve) => {
+        getCollection(vocab).then((cc) => {
+            cc.collection.update(
+                {_id: id},
+                { $push: { sightings: sighting} } ).then((res) => {
+                    resolve(sighting);
+            });
+        });
+    });
+}
+
+export function fetchAllVocab() {
+    return new Promise<Dbentry[]>((resolve) => {
+        getCollection(vocab).then((cc) => {
+            cc.collection.find().toArray((err, res) => {
+                resolve(res);
             });
         });
     });

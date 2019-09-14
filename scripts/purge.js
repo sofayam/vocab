@@ -1,0 +1,1 @@
+db.vocab.update({}, {$unset: {sightings:1}}, {multi: true});
