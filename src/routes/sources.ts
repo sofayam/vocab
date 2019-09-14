@@ -8,10 +8,12 @@ sources.get("/", async (req, res) => {
     const choices = await getSources();
     const current = await getCurrentSource();
     for (const choice of choices) {
-        if (choice.tag === current.tag) {
-            choice.current = true;
+        if (current && current.tag && choice.tag) {
+            if (choice.tag === current.tag) {
+                choice.current = true;
+            }
         }
     }
 
-    res.render("sources", {choices});
+    res.render("sources", { choices });
 });
