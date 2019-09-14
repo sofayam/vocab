@@ -41,10 +41,19 @@ primeSources().then(() => {
 async function setupSightings() {
     const vocab = await mongo.fetchAllVocab();
     for (const entry of vocab) {
-        const visits = parseInt(entry.visits, 10);
+        let visits = parseInt(entry.visits, 10);
         if (!isNaN(visits)) {
             console.log(entry.word, " : ", visits);
+        } else {
+            visits = 1;
         }
+        while (visits > 0) {
+            if (entry._id) {
+                mongo.addSighting(entry._id, entry.context, entry.created);
+            }
+            visits = visits - 1;
+        }
+
     }
 }
 

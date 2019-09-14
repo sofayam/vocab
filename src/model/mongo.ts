@@ -25,7 +25,7 @@ export interface Dbentry {
     context: string;
     type: string;
     example: string;
-    created: Date;
+    created: number;
     visits: string;
     sightings?: Sighting[];
 }
@@ -238,10 +238,13 @@ export function setCurrentSource(chosen: string) {
     });
 }
 
-export function addSighting(id: number, tag: string) {
+export function addSighting(id: string, tag: string, time?: number) {
+    if (!time) {
+        time = new Date().getTime();
+    }
     const sighting: Sighting = {
         source: tag,
-        time: new Date().getTime(),
+        time,
     };
     return new Promise<Sighting>((resolve) => {
         getCollection(vocab).then((cc) => {
