@@ -136,11 +136,11 @@ export function fetchOne(word: string) {
     });
 }
 
-export function killMany(word: string) {
+export function kill(id: string) {
     return new Promise((resolve) => {
         getCollection(vocab).then((cc) => {
             // delete the old ones first
-            cc.collection.deleteMany({ word }, (err, res) => {
+            cc.collection.deleteOne({ _id: new ObjectId(id) }, (err, res) => {
                 assert.equal(err, null);
                 cc.client.close();
                 resolve({ success: true });

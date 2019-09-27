@@ -12,41 +12,45 @@ $(() => {
 
     $("#choose").change(function() {
         const choice = $(this).children("option:selected").val();
-        const data = {current: choice};
+        const data = { current: choice };
         $.ajax(
             "/setCurrentSource",
             {
-            type: "POST",
-            data,
-            dataType: "json",
-            success: (_) => {
-                alert("yes");
-            },
-            error: (_, error) => {
-                alert("Error " + JSON.stringify(error));
-            },
-        });
+                type: "POST",
+                data,
+                dataType: "json",
+                success: (_) => {
+                    alert("yes");
+                },
+                error: (_, error) => {
+                    alert("Error " + JSON.stringify(error));
+                },
+            });
     });
 
     $("#deleteTop").click(deletefn);
     $("#deleteBot").click(deletefn);
     function deletefn(event) {
         const myForm = document.forms["vocab"];
-        const data = { word: myForm.word.value };
-        if (confirm("For realsies?")) {
-            $.ajax(
-                "/kill",
-                {
-                    type: "POST",
-                    data,
-                    dataType: "json",
-                    success: (_) => {
-                        stuffContents({}, true);
-                    },
-                    error: (_, error) => {
-                        alert("Error " + JSON.stringify(error));
-                    },
-                });
+        if (myForm._id) {
+            const data = { id: myForm._id.value };
+            if (confirm("For realsies?")) {
+                $.ajax(
+                    "/kill",
+                    {
+                        type: "POST",
+                        data,
+                        dataType: "json",
+                        success: (_) => {
+                            stuffContents({}, true);
+                        },
+                        error: (_, error) => {
+                            alert("Error " + JSON.stringify(error));
+                        },
+                    });
+            }
+        } else {
+            alert("Entry is not in database");
         }
     }
 

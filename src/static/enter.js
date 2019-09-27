@@ -12254,19 +12254,24 @@ $(function () {
     $("#deleteBot").click(deletefn);
     function deletefn(event) {
         var myForm = document.forms["vocab"];
-        var data = { word: myForm.word.value };
-        if (confirm("For realsies?")) {
-            $.ajax("/kill", {
-                type: "POST",
-                data: data,
-                dataType: "json",
-                success: function (_) {
-                    stuffContents({}, true);
-                },
-                error: function (_, error) {
-                    alert("Error " + JSON.stringify(error));
-                }
-            });
+        if (myForm._id) {
+            var data = { id: myForm._id.value };
+            if (confirm("For realsies?")) {
+                $.ajax("/kill", {
+                    type: "POST",
+                    data: data,
+                    dataType: "json",
+                    success: function (_) {
+                        stuffContents({}, true);
+                    },
+                    error: function (_, error) {
+                        alert("Error " + JSON.stringify(error));
+                    }
+                });
+            }
+        }
+        else {
+            alert("Entry is not in database");
         }
     }
     $("#bumpTop").click(bumpfn);
