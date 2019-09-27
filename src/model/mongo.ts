@@ -59,22 +59,52 @@ function getCollection(collName: string) {
 }
 
 export function save(entry: Dbentry) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         getCollection(vocab).then((cc) => {
-            // delete the old ones first
-            cc.collection.deleteMany({ word: entry.word }, (err, res) => {
-                assert.equal(err, null);
-                cc.collection.insertOne(entry, (err1, res1) => {
-                    cc.client.close();
-                    if (res1) {
-                        // console.log("inserted new entry");
-                        resolve({ success: true });
-                    }
+            if (entry._id) {
+                // update existing
+                cc.collection.updateOne(
+                    { _id: new ObjectId(entry._id) },
+                    {
+                        word: entry.word,
+                        meaning: entry.meaning,
+                        example: entry.example,
+                        type: entry.type,
+                        // the other fields are still there from before
+                    },
+                    (err, _) => {
+                        cc.client.close();
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    },
+                );
+            } else {
+                // create new record
+                const stamp = new Date().getTime();
+                getCurrentSource().then((choice) => {
+                    const newEntry: Dbentry = {
+                        word: entry.word,
+                        meaning: entry.meaning,
+                        example: entry.example,
+                        type: entry.type,
+                        created: stamp,
+                        sightings: [{ source: choice.tag, time: stamp }],
+                    };
+                    cc.collection.insertOne(newEntry, (err, _) => {
+                        cc.client.close();
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve({ success: true });
+                        }
+                    });
                 });
-            });
+            }
         });
     });
-
 }
 
 export function findExisting(fragment: string) {
@@ -127,7 +157,7 @@ export function dump(page) {
                 limit: pageSize,
             };
             cc.collection.countDocuments().then((ct) => {
-                cc.collection.find({ }, options).sort({$natural: -1}).toArray((err, res) => {
+                cc.collection.find({}, options).sort({ $natural: -1 }).toArray((err, res) => {
                     if (err) {
                         throw (Error(`Error: ${err}`));
                     }
@@ -211,9 +241,9 @@ export function getSources() {
 }
 
 export function getCurrentSource() {
-    return new Promise<Choice> ((resolve) => {
+    return new Promise<Choice>((resolve) => {
         getCollection(current).then((cc) => {
-            cc.collection.findOne({}, {sort: {$natural: -1}}).then((res) => {
+            cc.collection.findOne({}, { sort: { $natural: -1 } }).then((res) => {
                 resolve(res);
                 cc.client.close();
             });
@@ -247,10 +277,10 @@ export function addSighting(id: string, tag: string, time?: number) {
     return new Promise<Sighting>((resolve) => {
         getCollection(vocab).then((cc) => {
             cc.collection.updateOne(
-                {_id: new ObjectId(id)},
-                { $push: { sightings: sighting} } ).then((res) => {
+                { _id: new ObjectId(id) },
+                { $push: { sightings: sighting } }).then((res) => {
                     resolve(sighting);
-            });
+                });
         });
     });
 }

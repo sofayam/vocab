@@ -4,6 +4,7 @@ import * as $ from "jquery";
 (window as any).jQuery = $;
 
 import "easy-autocomplete";
+import { niceDateString } from "../util/datefn";
 
 $(() => {
     const fields = ["meaning", "type", "example", "_id"];
@@ -87,6 +88,7 @@ $(() => {
     function savefn(_) {
         const myForm = document.forms["vocab"];
         const data = {
+            _id: myForm._id.value.trim(),
             word: myForm.word.value.trim(),
             meaning: myForm.meaning.value.trim(),
             type: myForm.type.value.trim(),
@@ -202,11 +204,9 @@ $(() => {
             $("#visits").text(numSightings);
         }
         if (data.created) {
-            const creationData = parseInt(data.created, 10);
-            const creationDate = new Date(creationData);
-            const creationString = creationDate.toString();
-            const trimString = creationString.substring(0, 24);
-            $("#created").text(trimString);
+            const nds = niceDateString(data.created);
+            // TODO: Humanised string n <largest unit>s ago
+            $("#created").text(nds);
         }
     }
     function armDirty() {

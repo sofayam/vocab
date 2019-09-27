@@ -2,6 +2,7 @@
 import * as express from "express";
 import { fetchLast, fetchOne } from "../model/mongo";
 import { getCurrentSource, getSources } from "../model/mongo";
+import { niceDateString } from "../util/datefn";
 
 export const enter = express.Router();
 
@@ -23,5 +24,6 @@ enter.get("/", async (req, res) => {
             }
         }
     }
-    res.render("enter", {word: fields, choices });
+    const nds = niceDateString(fields.created);
+    res.render("enter", {word: fields, choices, nds });
 });

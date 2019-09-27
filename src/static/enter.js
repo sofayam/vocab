@@ -12231,6 +12231,7 @@ var $ = require("jquery");
 window.$ = $;
 window.jQuery = $;
 require("easy-autocomplete");
+var datefn_1 = require("../util/datefn");
 $(function () {
     var fields = ["meaning", "type", "example", "_id"];
     armDirty();
@@ -12302,6 +12303,7 @@ $(function () {
     function savefn(_) {
         var myForm = document.forms["vocab"];
         var data = {
+            _id: myForm._id.value.trim(),
             word: myForm.word.value.trim(),
             meaning: myForm.meaning.value.trim(),
             type: myForm.type.value.trim(),
@@ -12410,11 +12412,9 @@ $(function () {
             $("#visits").text(numSightings);
         }
         if (data.created) {
-            var creationData = parseInt(data.created, 10);
-            var creationDate = new Date(creationData);
-            var creationString = creationDate.toString();
-            var trimString = creationString.substring(0, 24);
-            $("#created").text(trimString);
+            var nds = datefn_1.niceDateString(data.created);
+            // TODO: Humanised string n <largest unit>s ago
+            $("#created").text(nds);
         }
     }
     function armDirty() {
@@ -12468,4 +12468,16 @@ $(function () {
     }
 });
 
-},{"easy-autocomplete":1,"jquery":2}]},{},[3]);
+},{"../util/datefn":4,"easy-autocomplete":1,"jquery":2}],4:[function(require,module,exports){
+"use strict";
+exports.__esModule = true;
+function niceDateString(inp) {
+    var creationData = parseInt(inp, 10);
+    var creationDate = new Date(creationData);
+    var creationString = creationDate.toString();
+    var trimString = creationString.substring(0, 24);
+    return trimString;
+}
+exports.niceDateString = niceDateString;
+
+},{}]},{},[3]);
