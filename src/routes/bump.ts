@@ -5,8 +5,8 @@ import { bumpIt } from "../model/mongo";
 export const bump = express.Router();
 
 bump.post("/", async (req, res) => {
-    if (req.body.id) {
-        await bumpIt(req.body.id);
+    if (req.body.id && req.body.context) {
+        await bumpIt(req.body.id, req.body.context);
     }
     res.json();
 });

@@ -5,6 +5,7 @@ import * as path from "path";
 
 import { port } from "./util/config";
 
+import { bump } from "./routes/bump";
 import { contexts } from "./routes/contexts";
 import { enter } from "./routes/enter";
 import { fetch } from "./routes/fetch";
@@ -48,6 +49,7 @@ app.use("/fetchLatest", fetchLatest);
 app.use("/sources", sources);
 app.use("/saveNewSource", saveNewSource);
 app.use("/setCurrentSource", setCurrentSource);
+app.use("/bump", bump);
 
 app.get("/", (req, res) => {
     res.redirect("/enter");

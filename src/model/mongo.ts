@@ -178,8 +178,8 @@ export function fetchLast() {
     });
 }
 
-export function bumpIt(id: number) {
-    // TODO:
+export async function bumpIt(id: string, context: string) {
+    await addSighting(id, context);
 }
 
 export function addSource(source: Source) {

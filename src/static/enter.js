@@ -12232,7 +12232,7 @@ window.$ = $;
 window.jQuery = $;
 require("easy-autocomplete");
 $(function () {
-    var fields = ["meaning", "context", "type", "example", "visits", "created"];
+    var fields = ["meaning", "context", "type", "example", "visits", "created", "_id"];
     armDirty();
     $("#deleteTop").click(deletefn);
     $("#deleteBot").click(deletefn);
@@ -12257,16 +12257,24 @@ $(function () {
     $("#bumpBot").click(bumpfn);
     function bumpfn(event) {
         var myForm = document.forms["vocab"];
-        var ctr = myForm.visits.value;
-        if (ctr) {
-            ctr = parseInt(ctr, 10);
-        }
-        else {
-            ctr = 0;
-        }
-        ctr += 1;
-        $("#visits").val(ctr);
-        $("#visits").css({ background: "pink" });
+        var id = myForm._id.value;
+        // get current source
+        var source = "foo";
+        var data = {
+            id: id,
+            context: source
+        };
+        $.ajax("/bump", {
+            type: "POST",
+            data: data,
+            // dataType: "json",
+            success: function (_) {
+                alert("bumped");
+            },
+            error: function (wah, error) {
+                alert("Whoops " + error + wah);
+            }
+        });
     }
     $("#saveBot").mouseup(savefn);
     $("#saveTop").mouseup(savefn);
@@ -12281,7 +12289,6 @@ $(function () {
             created: myForm.created.value.trim() || new Date().getTime(),
             visits: myForm.visits.value.trim()
         };
-        var previousContext = myForm.context.value;
         $.ajax("/save", {
             type: "POST",
             data: data,
@@ -12370,21 +12377,6 @@ $(function () {
         }
     };
     $("#context").easyAutocomplete(contextacoptions);
-    $("#find").click(function (event) {
-        var myForm = document.forms["vocab"];
-        var data = { fragment: myForm.word.value };
-        $.ajax("/find", {
-            type: "POST",
-            data: data,
-            dataType: "json",
-            success: function (dataReturned) {
-                alert("Success" + JSON.stringify(dataReturned));
-            },
-            error: function (request, error) {
-                alert("Error " + JSON.stringify(error));
-            }
-        });
-    });
     function stuffContents(data, full, context) {
         if (full === void 0) { full = false; }
         if (context === void 0) { context = false; }

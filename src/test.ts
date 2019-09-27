@@ -57,10 +57,21 @@ async function setupSightings() {
     }
 }
 
+async function goHitBaz() {
+    const x = await mongo.addSighting("5d466f3239eab242d3789f3c", "foo");
+}
+
 function runSetup() {
     setupSightings().then(() => {
         console.log("finished");
     });
 }
 
-runSetup();
+function hitBaz() {
+    goHitBaz().then(() => {
+        console.log("finished");
+    });
+}
+
+hitBaz();
+// runSetup();
