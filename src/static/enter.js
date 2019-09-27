@@ -12228,118 +12228,202 @@ return jQuery;
 exports.__esModule = true;
 // tslint:disable: no-string-literal
 var $ = require("jquery");
+window.$ = $;
 window.jQuery = $;
 require("easy-autocomplete");
-var fields = ["meaning", "context", "type", "example", "visits", "created"];
-armDirty();
-$("#deleteTop").click(deletefn);
-$("#deleteBot").click(deletefn);
-function deletefn(event) {
-    var myForm = document.forms["vocab"];
-    var data = { word: myForm.word.value };
-    if (confirm("For realsies?")) {
-        $.ajax("/kill", {
+$(function () {
+    var fields = ["meaning", "context", "type", "example", "visits", "created"];
+    armDirty();
+    $("#deleteTop").click(deletefn);
+    $("#deleteBot").click(deletefn);
+    function deletefn(event) {
+        var myForm = document.forms["vocab"];
+        var data = { word: myForm.word.value };
+        if (confirm("For realsies?")) {
+            $.ajax("/kill", {
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: function (_) {
+                    stuffContents({}, true, true);
+                },
+                error: function (_, error) {
+                    alert("Error " + JSON.stringify(error));
+                }
+            });
+        }
+    }
+    $("#bumpTop").click(bumpfn);
+    $("#bumpBot").click(bumpfn);
+    function bumpfn(event) {
+        var myForm = document.forms["vocab"];
+        var ctr = myForm.visits.value;
+        if (ctr) {
+            ctr = parseInt(ctr, 10);
+        }
+        else {
+            ctr = 0;
+        }
+        ctr += 1;
+        $("#visits").val(ctr);
+        $("#visits").css({ background: "pink" });
+    }
+    $("#saveBot").mouseup(savefn);
+    $("#saveTop").mouseup(savefn);
+    function savefn(_) {
+        var myForm = document.forms["vocab"];
+        var data = {
+            word: myForm.word.value.trim(),
+            meaning: myForm.meaning.value.trim(),
+            context: myForm.context.value.trim(),
+            type: myForm.type.value.trim(),
+            example: myForm.example.value.trim(),
+            created: myForm.created.value.trim() || new Date().getTime(),
+            visits: myForm.visits.value.trim()
+        };
+        var previousContext = myForm.context.value;
+        $.ajax("/save", {
             type: "POST",
             data: data,
             dataType: "json",
-            success: function (_) {
+            success: function (data1) {
+                // alert("Success" + JSON.stringify(data))
                 stuffContents({}, true, true);
+                setTimeout(function () {
+                    $("#word").focus();
+                    $("#word").select();
+                }, 500);
             },
-            error: function (_, error) {
+            error: function (request, error) {
                 alert("Error " + JSON.stringify(error));
             }
         });
     }
-}
-$("#bumpTop").click(bumpfn);
-$("#bumpBot").click(bumpfn);
-function bumpfn(event) {
-    var myForm = document.forms["vocab"];
-    var ctr = myForm.visits.value;
-    if (ctr) {
-        ctr = parseInt(ctr, 10);
-    }
-    else {
-        ctr = 0;
-    }
-    ctr += 1;
-    $("#visits").val(ctr);
-    $("#visits").css({ background: "pink" });
-}
-$("#saveBot").mouseup(savefn);
-$("#saveTop").mouseup(savefn);
-function savefn(_) {
-    var myForm = document.forms["vocab"];
-    var data = {
-        word: myForm.word.value.trim(),
-        meaning: myForm.meaning.value.trim(),
-        context: myForm.context.value.trim(),
-        type: myForm.type.value.trim(),
-        example: myForm.example.value.trim(),
-        created: myForm.created.value.trim() || new Date().getTime(),
-        visits: myForm.visits.value.trim()
-    };
-    var previousContext = myForm.context.value;
-    $.ajax("/save", {
-        type: "POST",
-        data: data,
-        dataType: "json",
-        success: function (data1) {
-            // alert("Success" + JSON.stringify(data))
-            stuffContents({}, true, true);
-            setTimeout(function () {
-                $("#word").focus();
-                $("#word").select();
-            }, 500);
+    var wordacoptions = {
+        url: function (_) {
+            return "find";
         },
-        error: function (request, error) {
-            alert("Error " + JSON.stringify(error));
+        getValue: function (element) {
+            return element.word;
+        },
+        ajaxSettings: {
+            dataType: "json",
+            method: "POST",
+            data: {
+                dataType: "json"
+            }
+        },
+        list: {
+            onChooseEvent: function () {
+                // alert("selected " + JSON.stringify($("#word").getSelectedItemData()))
+                var itemData = $("#word").getSelectedItemData();
+                stuffContents(itemData);
+            }
+        },
+        preparePostData: function (data) {
+            data.fragment = $("#word").val();
+            return data;
+        }
+    };
+    $("#word").easyAutocomplete(wordacoptions);
+    $("#word").keypress(function (event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode === 13) {
+            // see if there is anything in the dictionary already
+            var myForm = document.forms["vocab"];
+            var data_1 = { word: myForm.word.value };
+            $.ajax("/fetch", {
+                type: "POST",
+                data: data_1,
+                dataType: "json",
+                success: function (dataReturned) {
+                    if (dataReturned.length > 0) {
+                        stuffContents(data_1[0], false, true);
+                    }
+                    else {
+                        stuffContents({}, false, true);
+                    }
+                },
+                error: function (request, error) {
+                    alert("Error " + JSON.stringify(error));
+                }
+            });
         }
     });
-}
-var wordacoptions = {
-    url: function (_) {
-        return "find";
-    },
-    getValue: function (element) {
-        return element.word;
-    },
-    ajaxSettings: {
-        dataType: "json",
-        method: "POST",
-        data: {
-            dataType: "json"
+    var contextacoptions = {
+        url: function (phrase) {
+            return "contexts";
+        },
+        getValue: function (element) {
+            return element;
+        },
+        ajaxSettings: {
+            dataType: "json",
+            method: "POST",
+            data: {
+                dataType: "json"
+            }
+        },
+        preparePostData: function (data) {
+            data.fragment = $("#context").val();
+            return data;
         }
-    },
-    list: {
-        onChooseEvent: function () {
-            // alert("selected " + JSON.stringify($("#word").getSelectedItemData()))
-            var itemData = $("#word").getSelectedItemData();
-            stuffContents(itemData);
-        }
-    },
-    preparePostData: function (data) {
-        data.fragment = $("#word").val();
-        return data;
-    }
-};
-$("#word").easyAutocomplete(wordacoptions);
-$("#word").keypress(function (event) {
-    var keycode = (event.keyCode ? event.keyCode : event.which);
-    if (keycode === 13) {
-        // see if there is anything in the dictionary already
+    };
+    $("#context").easyAutocomplete(contextacoptions);
+    $("#find").click(function (event) {
         var myForm = document.forms["vocab"];
-        var data_1 = { word: myForm.word.value };
-        $.ajax("/fetch", {
+        var data = { fragment: myForm.word.value };
+        $.ajax("/find", {
             type: "POST",
-            data: data_1,
+            data: data,
             dataType: "json",
             success: function (dataReturned) {
-                if (dataReturned.length > 0) {
-                    stuffContents(data_1[0], false, true);
-                }
-                else {
-                    stuffContents({}, false, true);
+                alert("Success" + JSON.stringify(dataReturned));
+            },
+            error: function (request, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        });
+    });
+    function stuffContents(data, full, context) {
+        if (full === void 0) { full = false; }
+        if (context === void 0) { context = false; }
+        clean();
+        for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
+            var field = fields_1[_i];
+            $("#" + field).val(data[field]);
+        }
+        if (full) {
+            $("#word").val(data.word);
+        }
+        if (context) {
+            fetchLatestContext();
+        }
+    }
+    function armDirty() {
+        for (var _i = 0, fields_2 = fields; _i < fields_2.length; _i++) {
+            var field = fields_2[_i];
+            var f = function (fld) {
+                $(fld).keypress(function (event) {
+                    $(fld).css({ background: "pink" });
+                });
+            };
+            f("#" + field);
+        }
+    }
+    function clean() {
+        for (var _i = 0, fields_3 = fields; _i < fields_3.length; _i++) {
+            var field = fields_3[_i];
+            $("#" + field).css({ background: "white" });
+        }
+    }
+    function fetchLatestContext() {
+        $.ajax("/fetchLatest", {
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if (data && data.context) {
+                    $("#context").val(data.context);
                 }
             },
             error: function (request, error) {
@@ -12348,86 +12432,5 @@ $("#word").keypress(function (event) {
         });
     }
 });
-var contextacoptions = {
-    url: function (phrase) {
-        return "contexts";
-    },
-    getValue: function (element) {
-        return element;
-    },
-    ajaxSettings: {
-        dataType: "json",
-        method: "POST",
-        data: {
-            dataType: "json"
-        }
-    },
-    preparePostData: function (data) {
-        data.fragment = $("#context").val();
-        return data;
-    }
-};
-$("#context").easyAutocomplete(contextacoptions);
-$("#find").click(function (event) {
-    var myForm = document.forms["vocab"];
-    var data = { fragment: myForm.word.value };
-    $.ajax("/find", {
-        type: "POST",
-        data: data,
-        dataType: "json",
-        success: function (dataReturned) {
-            alert("Success" + JSON.stringify(dataReturned));
-        },
-        error: function (request, error) {
-            alert("Error " + JSON.stringify(error));
-        }
-    });
-});
-function stuffContents(data, full, context) {
-    if (full === void 0) { full = false; }
-    if (context === void 0) { context = false; }
-    clean();
-    for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
-        var field = fields_1[_i];
-        $("#" + field).val(data[field]);
-    }
-    if (full) {
-        $("#word").val(data.word);
-    }
-    if (context) {
-        fetchLatestContext();
-    }
-}
-function armDirty() {
-    for (var _i = 0, fields_2 = fields; _i < fields_2.length; _i++) {
-        var field = fields_2[_i];
-        var f = function (fld) {
-            $(fld).keypress(function (event) {
-                $(fld).css({ background: "pink" });
-            });
-        };
-        f("#" + field);
-    }
-}
-function clean() {
-    for (var _i = 0, fields_3 = fields; _i < fields_3.length; _i++) {
-        var field = fields_3[_i];
-        $("#" + field).css({ background: "white" });
-    }
-}
-function fetchLatestContext() {
-    $.ajax("/fetchLatest", {
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-            if (data && data.context) {
-                $("#context").val(data.context);
-            }
-        },
-        error: function (request, error) {
-            alert("Error " + JSON.stringify(error));
-        }
-    });
-}
 
 },{"easy-autocomplete":1,"jquery":2}]},{},[3]);
