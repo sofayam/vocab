@@ -11,6 +11,7 @@ import { enter } from "./routes/enter";
 import { fetch } from "./routes/fetch";
 import { fetchLatest } from "./routes/fetchLatest";
 import { find } from "./routes/find";
+import { getCurrentSource } from "./routes/getCurrentSource";
 import { kill } from "./routes/kill";
 import { list } from "./routes/list";
 import { save } from "./routes/save";
@@ -49,6 +50,7 @@ app.use("/fetchLatest", fetchLatest);
 app.use("/sources", sources);
 app.use("/saveNewSource", saveNewSource);
 app.use("/setCurrentSource", setCurrentSource);
+app.use("/getCurrentSource", getCurrentSource);
 app.use("/bump", bump);
 
 app.get("/", (req, res) => {

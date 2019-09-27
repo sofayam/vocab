@@ -1,22 +1,6 @@
 
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 
-
-<form id="chooseForm">
-  <label>Choose source:
-    <select id="choose">
-        {{#each choices}}
-            <option 
-                {{#if this.current}}
-                selected="selected"
-                {{/if}}
-            > {{this.tag}}
-            </option>
-        {{/each}}
-    </select>
-  </label>
-</form>
-
 Enter new source:
 
 <form id="sources">

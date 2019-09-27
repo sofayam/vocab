@@ -12232,8 +12232,23 @@ window.$ = $;
 window.jQuery = $;
 require("easy-autocomplete");
 $(function () {
-    var fields = ["meaning", "context", "type", "example", "visits", "created", "_id"];
+    var fields = ["meaning", "context", "type", "example", "created", "_id"];
     armDirty();
+    $("#choose").change(function () {
+        var choice = $(this).children("option:selected").val();
+        var data = { current: choice };
+        $.ajax("/setCurrentSource", {
+            type: "POST",
+            data: data,
+            dataType: "json",
+            success: function (_) {
+                alert("yes");
+            },
+            error: function (_, error) {
+                alert("Error " + JSON.stringify(error));
+            }
+        });
+    });
     $("#deleteTop").click(deletefn);
     $("#deleteBot").click(deletefn);
     function deletefn(event) {
@@ -12245,7 +12260,7 @@ $(function () {
                 data: data,
                 dataType: "json",
                 success: function (_) {
-                    stuffContents({}, true, true);
+                    stuffContents({}, true);
                 },
                 error: function (_, error) {
                     alert("Error " + JSON.stringify(error));
@@ -12258,23 +12273,29 @@ $(function () {
     function bumpfn(event) {
         var myForm = document.forms["vocab"];
         var id = myForm._id.value;
-        // get current source
-        var source = "foo";
-        var data = {
-            id: id,
-            context: source
-        };
-        $.ajax("/bump", {
-            type: "POST",
-            data: data,
-            // dataType: "json",
-            success: function (_) {
-                alert("bumped");
-            },
-            error: function (wah, error) {
-                alert("Whoops " + error + wah);
-            }
-        });
+        if (id) {
+            // get current source
+            getCurrentSource().then(function (source) {
+                var data = {
+                    id: id,
+                    context: source.tag
+                };
+                $.ajax("/bump", {
+                    type: "POST",
+                    data: data,
+                    dataType: "json",
+                    success: function (_) {
+                        alert("bumped");
+                    },
+                    error: function (wah, error) {
+                        alert("Whoops " + error + wah);
+                    }
+                });
+            });
+        }
+        else {
+            alert("Word is not (yet) in database so cannot be bumped");
+        }
     }
     $("#saveBot").mouseup(savefn);
     $("#saveTop").mouseup(savefn);
@@ -12286,8 +12307,7 @@ $(function () {
             context: myForm.context.value.trim(),
             type: myForm.type.value.trim(),
             example: myForm.example.value.trim(),
-            created: myForm.created.value.trim() || new Date().getTime(),
-            visits: myForm.visits.value.trim()
+            created: myForm.created.value.trim() || new Date().getTime()
         };
         $.ajax("/save", {
             type: "POST",
@@ -12295,7 +12315,7 @@ $(function () {
             dataType: "json",
             success: function (data1) {
                 // alert("Success" + JSON.stringify(data))
-                stuffContents({}, true, true);
+                stuffContents({}, true);
                 setTimeout(function () {
                     $("#word").focus();
                     $("#word").select();
@@ -12345,10 +12365,10 @@ $(function () {
                 dataType: "json",
                 success: function (dataReturned) {
                     if (dataReturned.length > 0) {
-                        stuffContents(data_1[0], false, true);
+                        stuffContents(data_1[0], false);
                     }
                     else {
-                        stuffContents({}, false, true);
+                        stuffContents({}, false);
                     }
                 },
                 error: function (request, error) {
@@ -12377,9 +12397,8 @@ $(function () {
         }
     };
     $("#context").easyAutocomplete(contextacoptions);
-    function stuffContents(data, full, context) {
+    function stuffContents(data, full) {
         if (full === void 0) { full = false; }
-        if (context === void 0) { context = false; }
         clean();
         for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
             var field = fields_1[_i];
@@ -12388,9 +12407,7 @@ $(function () {
         if (full) {
             $("#word").val(data.word);
         }
-        if (context) {
-            fetchLatestContext();
-        }
+        // TODO: deal with visits here
     }
     function armDirty() {
         for (var _i = 0, fields_2 = fields; _i < fields_2.length; _i++) {
@@ -12409,18 +12426,36 @@ $(function () {
             $("#" + field).css({ background: "white" });
         }
     }
+    /*
     function fetchLatestContext() {
-        $.ajax("/fetchLatest", {
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                if (data && data.context) {
-                    $("#context").val(data.context);
+        $.ajax(
+            "/fetchLatest",
+            {
+                type: "GET",
+                dataType: "json",
+                success: (data) => {
+                    if (data && data.context) {
+                        $("#context").val(data.context);
+                    }
+                },
+                error: (request, error) => {
+                    alert("Error " + JSON.stringify(error));
+                },
+            });
+    }
+    */
+    function getCurrentSource() {
+        return new Promise(function (resolve, reject) {
+            $.ajax("/getCurrentSource", {
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (_, error) {
+                    reject();
                 }
-            },
-            error: function (request, error) {
-                alert("Error " + JSON.stringify(error));
-            }
+            });
         });
     }
 });

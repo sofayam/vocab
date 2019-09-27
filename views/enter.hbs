@@ -1,6 +1,20 @@
 <link rel="stylesheet" href="/static/easyautocomplete/easy-autocomplete.css" />
 <script src="/static/enter.js"></script>
 
+<form id="chooseForm">
+  <label>Choose source:
+    <select id="choose">
+        {{#each choices}}
+            <option 
+                {{#if this.current}}
+                selected="selected"
+                {{/if}}
+            > {{this.tag}}
+            </option>
+        {{/each}}
+    </select>
+  </label>
+</form>
 <h1> Vocab Capture </h1>
 <button id=saveTop>save</button>
 ...........
@@ -8,8 +22,9 @@
 ...........
 <button id=deleteTop>delete</button>
 <p></p>
+
 <form id="vocab">
-    <input type="text" id="_id">
+    <input type="text" id="_id" hidden>
     <table>
         <tr>
             <td>

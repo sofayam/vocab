@@ -26,7 +26,6 @@ export interface Dbentry {
     type: string;
     example: string;
     created: number;
-    visits: string;
     sightings?: Sighting[];
 }
 
@@ -231,7 +230,7 @@ export function setCurrentSource(chosen: string) {
         };
         getCollection(current).then((cc) => {
             cc.collection.insertOne(choice).then((res) => {
-                resolve();
+                resolve({});
                 cc.client.close();
             });
         });
@@ -248,8 +247,8 @@ export function addSighting(id: string, tag: string, time?: number) {
     };
     return new Promise<Sighting>((resolve) => {
         getCollection(vocab).then((cc) => {
-            cc.collection.update(
-                {_id: id},
+            cc.collection.updateOne(
+                {_id: new ObjectId(id)},
                 { $push: { sightings: sighting} } ).then((res) => {
                     resolve(sighting);
             });

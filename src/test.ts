@@ -27,21 +27,21 @@ function testSource() {
 }
 
 async function primeSources() {
-    await mongo.addSource({tag: "Gnomo", full: "Wilson Rocha: Um Gnomo na Minha Horta"});
-    await mongo.addSource({tag: "Guarani", full: "José de Alencar: O Guarani"});
-    await mongo.addSource({tag: "Esquinas", full: "Ondjaki : Sonhos azuis pelas esquinas"});
+    await mongo.addSource({ tag: "Gnomo", full: "Wilson Rocha: Um Gnomo na Minha Horta" });
+    await mongo.addSource({ tag: "Guarani", full: "José de Alencar: O Guarani" });
+    await mongo.addSource({ tag: "Esquinas", full: "Ondjaki : Sonhos azuis pelas esquinas" });
 }
 
 function prime() {
-primeSources().then(() => {
-    console.log("primed the sources");
-});
+    primeSources().then(() => {
+        console.log("primed the sources");
+    });
 }
 
 async function setupSightings() {
     const vocab = await mongo.fetchAllVocab();
     for (const entry of vocab) {
-        let visits = parseInt(entry.visits, 10);
+        let visits = 3;
         if (!isNaN(visits)) {
             console.log(entry.word, " : ", visits);
         } else {

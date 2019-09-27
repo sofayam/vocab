@@ -6,8 +6,26 @@ import * as $ from "jquery";
 import "easy-autocomplete";
 
 $(() => {
-    const fields = ["meaning", "context", "type", "example", "visits", "created", "_id"];
+    const fields = ["meaning", "context", "type", "example", "created", "_id"];
     armDirty();
+
+    $("#choose").change(function() {
+        const choice = $(this).children("option:selected").val();
+        const data = {current: choice}
+        $.ajax(
+            "/setCurrentSource",
+            {
+            type: "POST",
+            data,
+            dataType: "json",
+            success: (_) => {
+                alert("yes");
+            },
+            error: (_, error) => {
+                alert("Error " + JSON.stringify(error));
+            }
+        })
+    });
 
     $("#deleteTop").click(deletefn);
     $("#deleteBot").click(deletefn);
@@ -22,7 +40,7 @@ $(() => {
                     data,
                     dataType: "json",
                     success: (_) => {
-                        stuffContents({}, true, true);
+                        stuffContents({}, true);
                     },
                     error: (_, error) => {
                         alert("Error " + JSON.stringify(error));
@@ -37,26 +55,31 @@ $(() => {
 
         const myForm = document.forms["vocab"];
         const id = myForm._id.value;
-        // get current source
-        const source = "foo";
-        const data = {
-            id,
-            context: source,
-        };
-        $.ajax(
-            "/bump",
-            {
-                type: "POST",
-                data,
-                dataType: "json",
-                success: (_) => {
-                    alert("bumped");
-                },
-                error: (wah, error) => {
-                    alert("Whoops " + error + wah);
-                },
-            },
-        );
+        if (id) {
+            // get current source
+            getCurrentSource().then((source) => {
+                const data = {
+                    id,
+                    context: source.tag,
+                };
+                $.ajax(
+                    "/bump",
+                    {
+                        type: "POST",
+                        data,
+                        dataType: "json",
+                        success: (_) => {
+                            alert("bumped");
+                        },
+                        error: (wah, error) => {
+                            alert("Whoops " + error + wah);
+                        },
+                    },
+                );
+            });
+        } else {
+            alert("Word is not (yet) in database so cannot be bumped");
+        }
     }
 
     $("#saveBot").mouseup(savefn);
@@ -70,7 +93,6 @@ $(() => {
             type: myForm.type.value.trim(),
             example: myForm.example.value.trim(),
             created: myForm.created.value.trim() || new Date().getTime(),
-            visits: myForm.visits.value.trim(),
         };
         $.ajax(
             "/save",
@@ -80,7 +102,7 @@ $(() => {
                 dataType: "json",
                 success: (data1) => {
                     // alert("Success" + JSON.stringify(data))
-                    stuffContents({}, true, true);
+                    stuffContents({}, true);
                     setTimeout(() => {
                         $("#word").focus();
                         $("#word").select();
@@ -135,9 +157,9 @@ $(() => {
                     dataType: "json",
                     success: (dataReturned) => {
                         if (dataReturned.length > 0) {
-                            stuffContents(data[0], false, true);
+                            stuffContents(data[0], false);
                         } else {
-                            stuffContents({}, false, true);
+                            stuffContents({}, false);
                         }
 
                     },
@@ -169,7 +191,7 @@ $(() => {
     };
     ($("#context") as any).easyAutocomplete(contextacoptions);
 
-    function stuffContents(data: any, full = false, context = false) {
+    function stuffContents(data: any, full = false) {
         clean();
         for (const field of fields) {
             $("#" + field).val(data[field]);
@@ -177,9 +199,7 @@ $(() => {
         if (full) {
             $("#word").val(data.word);
         }
-        if (context) {
-            fetchLatestContext();
-        }
+        // TODO: deal with visits here
     }
     function armDirty() {
         for (const field of fields) {
@@ -196,6 +216,7 @@ $(() => {
             $("#" + field).css({ background: "white" });
         }
     }
+    /*
     function fetchLatestContext() {
         $.ajax(
             "/fetchLatest",
@@ -211,5 +232,23 @@ $(() => {
                     alert("Error " + JSON.stringify(error));
                 },
             });
+    }
+    */
+    function getCurrentSource() {
+        return new Promise<any>((resolve, reject) => {
+            $.ajax(
+                "/getCurrentSource",
+                {
+                    type: "GET",
+                    dataType: "json",
+                    success: (data) => {
+                        resolve(data);
+                    },
+                    error: (_, error) => {
+                        reject();
+                    },
+                },
+            );
+        });
     }
 });

@@ -1,6 +1,7 @@
 
 import * as express from "express";
 import { fetchLast, fetchOne } from "../model/mongo";
+import { getCurrentSource, getSources } from "../model/mongo";
 
 export const enter = express.Router();
 
@@ -17,5 +18,15 @@ enter.get("/", async (req, res) => {
             fields.context = last.context;
         }
     }
-    res.render("enter", {word: fields});
+    // TODO: Refactor
+    const choices = await getSources();
+    const current = await getCurrentSource();
+    for (const choice of choices) {
+        if (current && current.tag && choice.tag) {
+            if (choice.tag === current.tag) {
+                choice.current = true;
+            }
+        }
+    }
+    res.render("enter", {word: fields, choices });
 });

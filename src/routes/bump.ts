@@ -8,5 +8,5 @@ bump.post("/", async (req, res) => {
     if (req.body.id && req.body.context) {
         await bumpIt(req.body.id, req.body.context);
     }
-    res.json();
+    res.json({});
 });
