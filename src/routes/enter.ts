@@ -12,11 +12,6 @@ enter.get("/", async (req, res) => {
         if (words.length > 0) {
             fields = words[0];
         }
-    } else {
-        const last = await fetchLast();
-        if (last) {
-            fields.context = last.context;
-        }
     }
     // TODO: Refactor
     const choices = await getSources();

@@ -49,7 +49,7 @@ async function setupSightings() {
         }
         while (visits > 0) {
             if (entry._id) {
-                mongo.addSighting(entry._id, entry.context, entry.created);
+                mongo.addSighting(entry._id, "foo", entry.created);
             }
             visits = visits - 1;
         }

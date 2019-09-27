@@ -52,14 +52,6 @@
         </tr>
         <tr>
             <td>
-                Context:
-            </td>
-            <td>
-                <input type="text" id="context" value="{{word.context}}">
-            </td>
-        </tr>
-        <tr>
-            <td>
                 Example:
             </td>
             <td>
@@ -73,7 +65,7 @@
                 Visits:
             </td>
             <td>
-                <input type="text" id="visits" value="{{word.sightings.length}}">
+                <span id="visits"></span>
             </td>
         </tr>
         <tr>
@@ -81,11 +73,13 @@
                 Created:
             </td>
             <td>
-                <input type="text" id="created" value="{{word.created}}">
+                <span id="created"></span>
             </td>
         </tr>
     </table>
 </form>
+    
+<p></p>          
 <button id=saveBot>save</button>
 ...........
 <button id=bumpBot>bump</button>

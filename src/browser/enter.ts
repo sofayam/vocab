@@ -6,12 +6,12 @@ import * as $ from "jquery";
 import "easy-autocomplete";
 
 $(() => {
-    const fields = ["meaning", "context", "type", "example", "created", "_id"];
+    const fields = ["meaning", "type", "example", "_id"];
     armDirty();
 
     $("#choose").change(function() {
         const choice = $(this).children("option:selected").val();
-        const data = {current: choice}
+        const data = {current: choice};
         $.ajax(
             "/setCurrentSource",
             {
@@ -23,8 +23,8 @@ $(() => {
             },
             error: (_, error) => {
                 alert("Error " + JSON.stringify(error));
-            }
-        })
+            },
+        });
     });
 
     $("#deleteTop").click(deletefn);
@@ -89,10 +89,8 @@ $(() => {
         const data = {
             word: myForm.word.value.trim(),
             meaning: myForm.meaning.value.trim(),
-            context: myForm.context.value.trim(),
             type: myForm.type.value.trim(),
             example: myForm.example.value.trim(),
-            created: myForm.created.value.trim() || new Date().getTime(),
         };
         $.ajax(
             "/save",
@@ -199,7 +197,17 @@ $(() => {
         if (full) {
             $("#word").val(data.word);
         }
-        // TODO: deal with visits here
+        if (data.sightings) {
+            const numSightings = String(data.sightings.length);
+            $("#visits").text(numSightings);
+        }
+        if (data.created) {
+            const creationData = parseInt(data.created, 10);
+            const creationDate = new Date(creationData);
+            const creationString = creationDate.toString();
+            const trimString = creationString.substring(0, 24);
+            $("#created").text(trimString);
+        }
     }
     function armDirty() {
         for (const field of fields) {

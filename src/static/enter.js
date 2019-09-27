@@ -12232,7 +12232,7 @@ window.$ = $;
 window.jQuery = $;
 require("easy-autocomplete");
 $(function () {
-    var fields = ["meaning", "context", "type", "example", "created", "_id"];
+    var fields = ["meaning", "type", "example", "_id"];
     armDirty();
     $("#choose").change(function () {
         var choice = $(this).children("option:selected").val();
@@ -12304,10 +12304,8 @@ $(function () {
         var data = {
             word: myForm.word.value.trim(),
             meaning: myForm.meaning.value.trim(),
-            context: myForm.context.value.trim(),
             type: myForm.type.value.trim(),
-            example: myForm.example.value.trim(),
-            created: myForm.created.value.trim() || new Date().getTime()
+            example: myForm.example.value.trim()
         };
         $.ajax("/save", {
             type: "POST",
@@ -12407,7 +12405,17 @@ $(function () {
         if (full) {
             $("#word").val(data.word);
         }
-        // TODO: deal with visits here
+        if (data.sightings) {
+            var numSightings = String(data.sightings.length);
+            $("#visits").text(numSightings);
+        }
+        if (data.created) {
+            var creationData = parseInt(data.created, 10);
+            var creationDate = new Date(creationData);
+            var creationString = creationDate.toString();
+            var trimString = creationString.substring(0, 24);
+            $("#created").text(trimString);
+        }
     }
     function armDirty() {
         for (var _i = 0, fields_2 = fields; _i < fields_2.length; _i++) {

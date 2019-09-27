@@ -22,7 +22,6 @@ export interface Dbentry {
     _id?: string;
     word: string;
     meaning: string;
-    context: string;
     type: string;
     example: string;
     created: number;
