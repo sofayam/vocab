@@ -204,10 +204,12 @@ $(() => {
             $("#word").val(data.word);
         }
         if (data.sightings) {
-            // const numSightings = String(data.sightings.length);
+            const numSightings = String(data.sightings.length);
             // TODO: popup here
-            const fnow = fromNow(data.sightings[0].time);
-            $("#visits").text(fnow);
+            // const fnow = fromNow(data.sightings[0].time);
+            $("#visits").text(numSightings);
+        } else {
+            $("#visits").text("");
         }
         if (data.created) {
             const fnow = fromNow(data.created);
@@ -215,6 +217,8 @@ $(() => {
             const fulldate = fnow + " (" + nds + ")";
             // TODO: Humanised string n <largest unit>s ago
             $("#created").text(fulldate);
+        } else {
+            $("#created").text("");
         }
     }
     function armDirty() {
@@ -267,4 +271,35 @@ $(() => {
             );
         });
     }
+
+    // Get the modal
+    const modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    const btn = document.getElementById("deets");
+
+    // Get the <span> element that closes the modal
+    const span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    if (btn && modal) {
+        btn.onclick = () => {
+            modal.style.display = "block";
+        };
+
+        // When the user clicks on <span> (x), close the modal
+        (span as any).onclick = () => {
+            modal.style.display = "none";
+        };
+
+        // When the user clicks anywhere outside of the modal, close it
+        /*
+        window.onclick = (event) => {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+        */
+    }
+
 });

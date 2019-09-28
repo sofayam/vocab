@@ -17,6 +17,7 @@ import { list } from "./routes/list";
 import { save } from "./routes/save";
 import { saveNewSource } from "./routes/saveNewSource";
 import { setCurrentSource } from "./routes/setCurrentSource";
+import { sightings } from "./routes/sightings";
 import { sources } from "./routes/sources";
 
 const serverPort = normalizePort(process.env.PORT || port);
@@ -52,6 +53,7 @@ app.use("/saveNewSource", saveNewSource);
 app.use("/setCurrentSource", setCurrentSource);
 app.use("/getCurrentSource", getCurrentSource);
 app.use("/bump", bump);
+app.use("/sightings", sightings);
 
 app.get("/", (req, res) => {
     res.redirect("/enter");

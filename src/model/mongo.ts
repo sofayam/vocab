@@ -1,6 +1,6 @@
 
 import * as assert from "assert";
-import { Collection, MongoClient, MongoClientOptions, ObjectId } from "mongodb";
+import { Collection, MongoClient, ObjectId } from "mongodb";
 import { pageSize } from "../util/config";
 
 export interface Source {
@@ -66,18 +66,20 @@ export function save(entry: Dbentry) {
                 cc.collection.updateOne(
                     { _id: new ObjectId(entry._id) },
                     {
-                        word: entry.word,
-                        meaning: entry.meaning,
-                        example: entry.example,
-                        type: entry.type,
-                        // the other fields are still there from before
+                        $set: {
+                            word: entry.word,
+                            meaning: entry.meaning,
+                            example: entry.example,
+                            type: entry.type,
+                            // the other fields are still there from before
+                        },
                     },
                     (err, _) => {
                         cc.client.close();
                         if (err) {
                             reject(err);
                         } else {
-                            resolve();
+                            resolve({ success: true });
                         }
                     },
                 );
@@ -130,6 +132,21 @@ export function fetchOne(word: string) {
                     throw (Error(`Error: ${err}`));
                 }
                 resolve(res);
+                cc.client.close();
+            });
+        });
+    });
+}
+
+export function fetchID(id: string) {
+    return new Promise<Dbentry>((resolve, reject) => {
+        getCollection(vocab).then((cc) => {
+            cc.collection.findOne({ _id: new ObjectId(id) }).then((entry) => {
+                if (entry) {
+                    resolve(entry);
+                } else {
+                    reject();
+                }
                 cc.client.close();
             });
         });
