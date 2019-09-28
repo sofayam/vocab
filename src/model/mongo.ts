@@ -168,7 +168,7 @@ export function dump(page) {
         });
     });
 }
-
+/*
 export function fetchContexts(fragment) {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
@@ -189,7 +189,7 @@ export function fetchContexts(fragment) {
         });
     });
 }
-
+*/
 export function fetchLast() {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {

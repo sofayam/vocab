@@ -4,7 +4,7 @@ import * as $ from "jquery";
 (window as any).jQuery = $;
 
 import "easy-autocomplete";
-import { niceDateString } from "../util/datefn";
+import { fromNow, niceDateString } from "../util/datefn";
 
 $(() => {
     const fields = ["meaning", "type", "example", "_id"];
@@ -20,7 +20,7 @@ $(() => {
                 data,
                 dataType: "json",
                 success: (_) => {
-                    alert("yes");
+                    // alert("yes");
                 },
                 error: (_, error) => {
                     alert("Error " + JSON.stringify(error));
@@ -74,7 +74,7 @@ $(() => {
                         data,
                         dataType: "json",
                         success: (_) => {
-                            alert("bumped");
+                            // alert("bumped");
                         },
                         error: (wah, error) => {
                             alert("Whoops " + error + wah);
@@ -204,13 +204,17 @@ $(() => {
             $("#word").val(data.word);
         }
         if (data.sightings) {
-            const numSightings = String(data.sightings.length);
-            $("#visits").text(numSightings);
+            // const numSightings = String(data.sightings.length);
+            // TODO: popup here
+            const fnow = fromNow(data.sightings[0].time);
+            $("#visits").text(fnow);
         }
         if (data.created) {
+            const fnow = fromNow(data.created);
             const nds = niceDateString(data.created);
+            const fulldate = fnow + " (" + nds + ")";
             // TODO: Humanised string n <largest unit>s ago
-            $("#created").text(nds);
+            $("#created").text(fulldate);
         }
     }
     function armDirty() {

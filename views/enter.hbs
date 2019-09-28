@@ -24,7 +24,7 @@
 <p></p>
 
 <form id="vocab">
-    <input type="text" id="_id" value={{word._id}}>
+    <input type="hidden" id="_id" value={{word._id}}>
     <table>
         <tr>
             <td>
@@ -62,7 +62,7 @@
         </tr>
         <tr>
             <td>
-                Visits:
+                Sightings:
             </td>
             <td>
                 <span id="visits">{{word.sightings.length}}</span>
