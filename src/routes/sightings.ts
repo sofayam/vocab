@@ -8,9 +8,9 @@ export const sightings = express.Router();
 sightings.get("/", async (req, res) => {
 
     const id = req.query.id as string;
+    const results: string[] = [];
     if (id) {
         const entry = await fetchID(id);
-        const results: string[] = [];
         if (entry.sightings) {
 
             for (const sighting of entry.sightings) {
@@ -21,11 +21,6 @@ sightings.get("/", async (req, res) => {
         } else {
             results.push("No sightings :-(");
         }
-        res.render("sightings", { results });
-    } else {
-        res.render("failure", {error: "couldn't find anything with id " + id});
     }
-    const choices = await getSources();
-
-    res.render("sources", { choices });
+    res.json({results});
 });

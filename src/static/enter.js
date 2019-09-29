@@ -17085,29 +17085,50 @@ $(function () {
             });
         });
     }
-    // Get the modal
-    var modal = document.getElementById("myModal");
-    // Get the button that opens the modal
-    var btn = document.getElementById("deets");
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-    // When the user clicks the button, open the modal
-    if (btn && modal) {
-        btn.onclick = function () {
-            modal.style.display = "block";
-        };
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            modal.style.display = "none";
-        };
-        // When the user clicks anywhere outside of the modal, close it
-        /*
-        window.onclick = (event) => {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        };
-        */
+    $("#deets").mouseup(deetsfn);
+    function deetsfnOld() {
+        var myForm = document.forms["vocab"];
+        var formId = myForm._id.value;
+        if (formId) {
+            var deetsURL = "/sightings?id=" + formId;
+            window.location.href = deetsURL;
+        }
+    }
+    function deetsfn() {
+        var myForm = document.forms["vocab"];
+        var word = myForm.word.value.trim();
+        var id = myForm._id.value;
+        if (id) {
+            var modal_1 = document.getElementById("myModal");
+            var closer_1 = document.getElementsByClassName("close")[0];
+            $("#modalheader").text("Sightings of \"" + word + "\" so far:");
+            $.ajax("/sightings?id=" + id, {
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $("#modalbody ul").text("");
+                    for (var _i = 0, _a = data.results; _i < _a.length; _i++) {
+                        var item = _a[_i];
+                        $("#modalbody ul").append("<li>" + item + "</li>");
+                    }
+                    if (modal_1) {
+                        modal_1.style.display = "block";
+                        // When the user clicks on <span> (x), close the modal
+                        closer_1.onclick = function () {
+                            modal_1.style.display = "none";
+                        };
+                    }
+                }
+            });
+            // When the user clicks anywhere outside of the modal, close it
+            /*
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            };
+            */
+        }
     }
 });
 
