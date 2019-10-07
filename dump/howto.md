@@ -8,7 +8,7 @@ restore:
 
     optionally:
 
-        mongodb
+        mongo
         use vocab
         db.dropDatabase()
 
