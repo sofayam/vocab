@@ -214,7 +214,7 @@ export function fetchLast() {
                 if (res.length > 0) {
                     resolve(res[0]);
                 } else {
-                    resolve();
+                    resolve(1);
                 }
                 cc.client.close();
             });
