@@ -2,6 +2,7 @@
 import * as assert from "assert";
 import { Collection, MongoClient, ObjectId } from "mongodb";
 import { pageSize } from "../util/config";
+import * as escapeStringRegexp from "escape-string-regexp";
 
 export interface Source {
     tag: string;
@@ -112,7 +113,8 @@ export function save(entry: Dbentry) {
 export function findExisting(fragment: string) {
     return new Promise<any>((resolve) => {
         getCollection(vocab).then((cc) => {
-            const selector = new RegExp("^" + fragment, "i");
+            const escfragment = escapeStringRegexp(fragment);
+            const selector = new RegExp("^" + escfragment, "i");
             cc.collection.find({ word: selector }).toArray((err, res) => {
                 if (err) {
                     throw (Error(`Error: ${err}`));
