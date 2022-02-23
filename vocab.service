@@ -1,0 +1,15 @@
+# copy this to /etc/systemd/system/vocab.service 
+
+[Unit]
+Description=vocab
+After=network.target
+
+[Service]
+User=mark
+Type=simple
+ExecStart=/usr/bin/node /home/mark/vocab/dist/index
+
+
+[Install]
+WantedBy=default.target
+
